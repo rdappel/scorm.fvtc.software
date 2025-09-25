@@ -78,11 +78,32 @@ The system supports intelligent template variable replacement with language-awar
 
 | Variable | Description |
 |----------|-------------|
+| **Student Variables** |
+| `{{id}}` | Student ID number |
+| `{{name}}` | Student name (alias for full_name) |
 | `{{first_name}}` | Student's first name |
 | `{{last_name}}` | Student's last name |
-| `{{id}}` | Student ID number |
+| `{{full_name}}` | Student's full name (first + last) |
+| **Context Variables** |
 | `{{course_title}}` | Course title |
 | `{{practice_title}}` | Assignment/practice title |
+| `{{object_id}}` | SCORM object identifier |
+| `{{language}}` | Programming language being used |
+| **Date & Time Variables** |
+| `{{date}}` | Current date (localized format) |
+| `{{time}}` | Current time (localized format) |
+| `{{datetime}}` | Current date and time (localized format) |
+| `{{timestamp}}` | Unix timestamp |
+| `{{year}}` | Current year |
+| `{{month}}` | Current month name |
+| `{{day}}` | Current day of week |
+| **Dynamic Variables** |
+| `{{random_number}}` | Random number (1-1000) |
+| `{{random_word}}` | Random word from predefined list |
+| `{{uuid}}` | Generated UUID |
+| `{{attempt_count}}` | Number of code runs this session |
+| `{{session_time}}` | Seconds since page load |
+| **Code Insertion** |
 | `{{student_code}}` | Placeholder where student code will be inserted |
 | `{{code}}` | Alternative placeholder for code insertion |
 
@@ -97,6 +118,7 @@ The system supports intelligent template variable replacement with language-awar
 // Hello /*{{first_name}}*/! Welcome to your JavaScript assignment.
 // Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
 // Assignment: /*{{practice_title}}*/
+// Generated on: /*{{date}}*/ at /*{{time}}*/
 
 /*{{student_code}}*/
 ```
@@ -105,6 +127,7 @@ The system supports intelligent template variable replacement with language-awar
 # Hello #{{first_name}}! Welcome to your Python assignment.
 # Student ID: #{{id}} | Course: #{{course_title}}
 # Assignment: #{{practice_title}}
+# Your attempt #: #{{attempt_count}}
 
 #{{student_code}}
 ```
@@ -114,6 +137,7 @@ The system supports intelligent template variable replacement with language-awar
 # Student ID: <#{{id}}#>
 # Course: <#{{course_title}}#>
 # Assignment: <#{{practice_title}}#>
+# Session ID: <#{{uuid}}#>
 
 <#{{student_code}}#>
 ```
