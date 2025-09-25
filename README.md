@@ -9,7 +9,7 @@ This project provides an intuitive web interface for educators to quickly genera
 ## Features
 
 ### 🎯 **Interactive Code Practice Objects**
-- **Multi-language Support**: JavaScript, Python, Java, C++, C#, PHP, Ruby
+- **Multi-language Support**: JavaScript, Python, Java, C++, C#, PHP
 - **Monaco Editor Integration**: Full-featured code editor with syntax highlighting
 - **Template Variables**: Dynamic content replacement (`{{student_name}}`, `{{course_title}}`, etc.)
 - **Dual Editor System**: Separate configuration and starting code editors
@@ -83,12 +83,40 @@ The system supports intelligent template variable replacement with language-awar
 | `{{id}}` | Student ID number |
 | `{{course_title}}` | Course title |
 | `{{practice_title}}` | Assignment/practice title |
+| `{{student_code}}` | Placeholder where student code will be inserted |
+| `{{code}}` | Alternative placeholder for code insertion |
 
 **Comment Style Support**:
 - **C-style**: `/*{{variable}}*/`  
 - **Hash**: `#{{variable}}`
 - **Double-slash**: `//{{variable}}`
 - **PowerShell**: `<#{{variable}}#>`
+
+**Examples by Language**:
+```javascript
+// Hello /*{{first_name}}*/! Welcome to your JavaScript assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+/*{{student_code}}*/
+```
+
+```python
+# Hello #{{first_name}}! Welcome to your Python assignment.
+# Student ID: #{{id}} | Course: #{{course_title}}
+# Assignment: #{{practice_title}}
+
+#{{student_code}}
+```
+
+```powershell
+# Welcome <#{{first_name}}#> <#{{last_name}}#>!
+# Student ID: <#{{id}}#>
+# Course: <#{{course_title}}#>
+# Assignment: <#{{practice_title}}#>
+
+<#{{student_code}}#>
+```
 
 ## Project Structure
 
@@ -169,7 +197,6 @@ NODE_ENV=development
 | C++ | `cpp` | `//`, `/*...*/` |
 | C# | `csharp` | `//`, `/*...*/` |
 | PHP | `php` | `//`, `/*...*/`, `#` |
-| Ruby | `ruby` | `#` |
 
 ## SCORM Compatibility
 
@@ -197,16 +224,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/rdappel/scorm.fvtc.software/issues)
 - **Documentation**: This README and inline code comments
-- **Examples**: Check the `/examples` directory for sample configurations
-
-## Roadmap
-
-- [ ] Additional programming language support (TypeScript, Go, Rust)
-- [ ] Visual drag-and-drop interface builder
-- [ ] Advanced analytics and reporting
-- [ ] Multi-language UI support
-- [ ] Bulk import/export functionality
-- [ ] Integration with popular code repositories
 
 ---
 

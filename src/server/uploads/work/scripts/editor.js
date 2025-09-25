@@ -41,7 +41,7 @@ function mergeCodeWithConfig(configCode, studentCode) {
 		/\/\*\s*INSERT_STUDENT_CODE_HERE\s*\*\//g, // /* INSERT_STUDENT_CODE_HERE */
 		/\/\*@student\*\//g,             // /*@student*/
 
-		// Hash comments (Python, PowerShell, Ruby, Shell)
+		// Hash comments (Python, PowerShell, Shell)
 		/#\{\{student_code\}\}/g,        // #{{student_code}}
 		/#\{\{code\}\}/g,               // #{{code}}
 		/#\s*STUDENT_CODE/g,            // # STUDENT_CODE
