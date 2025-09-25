@@ -1,0 +1,84 @@
+{
+	"type": "object",
+	"required": [
+		"title",
+		"identifier",
+		"scormVersion"
+	],
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"identifier": {
+			"type": "string"
+		},
+		"scormVersion": {
+			"type": "string",
+			"enum": [
+				"1.2",
+				"2004"
+			]
+		},
+		"launch": {
+			"type": "string",
+			"default": "index.html"
+		},
+		"contentPath": {
+			"type": "string",
+			"description": "Folder with your HTML/JS/CSS assets"
+		},
+		"masteryScore": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 100
+		},
+		"objectives": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"sco": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": [
+					"id",
+					"title",
+					"href"
+				],
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"href": {
+						"type": "string"
+					},
+					"prereq": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"metadata": {
+			"type": "object",
+			"properties": {
+				"author": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"keywords": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

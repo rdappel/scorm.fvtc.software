@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>C++ Programming - C++ Fundamentals</title>
+
+	<link rel="stylesheet" href="styles/reset.css">
+	<link rel="stylesheet" href="styles/site.css">
+	<link rel="stylesheet" href="styles/panel.css">
+
+	<!-- SCORM API will be provided by the LMS (Blackboard, etc.) -->
+	
+	<script src="scripts/panel.js" defer></script>
+	<script src="scripts/editor.js" defer></script>
+</head>
+
+<body>
+	<header>
+		<span class="course-title">C++ Programming</span>
+		<span class="assignment-title">C++ Fundamentals</span>
+	</header>
+	<main>
+		<div class="panel" id="editor"></div>
+		<div class="resize-handle"></div>
+		<div class="panel">
+			<div class="controls">
+				<button id="run">
+					<svg class="play-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+						width="24px" fill="#e3e3e3">
+						<path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z" />
+					</svg>
+					<span class="spinner">
+						<svg width="18" height="18" viewBox="0 0 50 50">
+							<circle cx="25" cy="25" r="20" fill="none" stroke="#e6edf3" stroke-width="5"
+								stroke-linecap="round" stroke-dasharray="31.4 31.4" transform="rotate(-90 25 25)">
+							</circle>
+						</svg>
+					</span>
+					<span>Run</span>
+				</button>
+				<button id="submit">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+						fill="#e3e3e3">
+						<path
+							d="m438-240 226-226-58-58-169 169-84-84-57 57 142 142ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
+					</svg>
+					<span>Submit</span>
+				</button>
+				<button id="reset">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+						fill="#e3e3e3">
+						<path
+							d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z" />
+					</svg>
+					<span>Reset</span>
+				</button>
+				<div>
+					<select id="output-type">
+						<option value="instructions" selected>Instructions</option>
+						<option value="program">Program Output</option>
+						<option value="build">Build Output</option>
+					</select>
+				</div>
+			</div>
+			<div id="instructions" style="display:block;">
+				<strong>C++ Fundamentals Instructions:</strong><br><br>
+				Complete the C++ functions using proper syntax.
+			</div>
+			<pre id="output" style="display:none;"></pre>
+		</div>
+	</main>
+
+	<!-- Configuration data attributes for code practice -->
+	<div id="scorm-config" style="display: none;"
+		 data-language="cpp"
+		 data-starting-code="Ly8gSGVsbG8gLyp7e2ZpcnN0X25hbWV9fSovISBXZWxjb21lIHRvIHlvdXIgQysrIGFzc2lnbm1lbnQuDQovLyBTdHVkZW50IElEOiAvKnt7aWR9fSovIHwgQ291cnNlOiAvKnt7Y291cnNlX3RpdGxlfX0qLw0KLy8gQXNzaWdubWVudDogLyp7e3ByYWN0aWNlX3RpdGxlfX0qLw0KDQojaW5jbHVkZSA8aW9zdHJlYW0+DQp1c2luZyBuYW1lc3BhY2Ugc3RkOw0KDQovLyAxLiBDcmVhdGUgYSBmdW5jdGlvbiB0aGF0IGFkZHMgdHdvIG51bWJlcnMNCmludCBhZGROdW1iZXJzKGludCBhLCBpbnQgYikgew0KICAgIC8vIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcmV0dXJuIDA7DQp9DQoNCi8vIDIuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgY2hlY2tzIGlmIGEgbnVtYmVyIGlzIGV2ZW4NCmJvb2wgaXNFdmVuKGludCBudW0pIHsNCiAgICAvLyBUT0RPOiBXcml0ZSB5b3VyIGNvZGUgaGVyZQ0KICAgIHJldHVybiBmYWxzZTsNCn0="
+		 data-config-code="Ly8gQ29uZmlndXJhdGlvbiBjb2RlIHJ1bnMgYmVmb3JlIHN0dWRlbnQgY29kZQ0KI2luY2x1ZGUgPGlvc3RyZWFtPg0KdXNpbmcgbmFtZXNwYWNlIHN0ZDsNCg0Kdm9pZCBydW5UZXN0cygpIHsNCiAgICBjb3V0IDw8ICJSdW5uaW5nIHRlc3RzLi4uIiA8PCBlbmRsOw0KICAgIA0KICAgIC8vIFRlc3QgYWRkTnVtYmVycyBmdW5jdGlvbg0KICAgIGludCBzdW0gPSBhZGROdW1iZXJzKDE1LCAyNSk7DQogICAgY291dCA8PCAiYWRkTnVtYmVycygxNSwgMjUpID0gIiA8PCBzdW0gPDwgIiAiIDw8IChzdW0gPT0gNDAgPyAiQ29ycmVjdCEiIDogIkluY29ycmVjdCIpIDw8IGVuZGw7DQogICAgDQogICAgLy8gVGVzdCBpc0V2ZW4gZnVuY3Rpb24NCiAgICBib29sIGV2ZW5UZXN0ID0gaXNFdmVuKDgpOw0KICAgIGNvdXQgPDwgImlzRXZlbig4KSA9ICIgPDwgKGV2ZW5UZXN0ID8gInRydWUiIDogImZhbHNlIikgPDwgIiAiIDw8IChldmVuVGVzdCA9PSB0cnVlID8gIkNvcnJlY3QhIiA6ICJJbmNvcnJlY3QiKSA8PCBlbmRsOw0KfQ0KDQovLyBTdHVkZW50IGNvZGUgd2lsbCBiZSBpbnNlcnRlZCBoZXJlOg0KLyp7e3N0dWRlbnRfY29kZX19Ki8NCg0KaW50IG1haW4oKSB7DQogICAgcnVuVGVzdHMoKTsNCiAgICByZXR1cm4gMDsNCn0="
+		 data-instructions="Q29tcGxldGUgdGhlIEMrKyBmdW5jdGlvbnMgdXNpbmcgcHJvcGVyIHN5bnRheC4="
+		 data-course-title="C++ Programming"
+		 data-practice-title="C++ Fundamentals"
+		 data-object-id="c-programming-c-fundamentals">
+	</div>
+	
+	<script>
+		// Load configuration from data attributes
+		const configElement = document.getElementById('scorm-config');
+		window.CODE_PRACTICE_CONFIG = {
+			language: configElement.dataset.language,
+			startingCode: atob(configElement.dataset.startingCode),
+			configCode: atob(configElement.dataset.configCode),
+			instructions: atob(configElement.dataset.instructions),
+			courseTitle: configElement.dataset.courseTitle,
+			practiceTitle: configElement.dataset.practiceTitle,
+			objectId: configElement.dataset.objectId
+		};
+		
+		// Store instructions globally for editor.js
+		window.INSTRUCTIONS_TEXT = window.CODE_PRACTICE_CONFIG.instructions;
+		
+		// Debug log to verify EJS processing
+		console.log('SCORM Configuration loaded:', window.CODE_PRACTICE_CONFIG);
+	</script>
+</body>
+
+</html>

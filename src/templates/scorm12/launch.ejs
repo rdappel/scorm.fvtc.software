@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= spec.title %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .content {
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f8ff;
+            border-left: 4px solid #2196F3;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+    <!-- SCORM API will be provided by the LMS (Blackboard) -->
+</head>
+<body>
+    <div class="container">
+        <h1><%= spec.title %></h1>
+        
+        <div class="content">
+            <% if (spec.metadata && spec.metadata.description) { %>
+                <p><%= spec.metadata.description %></p>
+            <% } %>
+            
+            <div class="progress">
+                <strong>📊 Progress Tracking:</strong> This content communicates with your LMS to track completion and progress.
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="completeLesson()">✅ Mark as Complete</button>
+        </div>
+    </div>
+    
+    <script>
+        function completeLesson() {
+            if (confirm('Mark this lesson as complete?')) {
+                // SCORM completion logic would go here
+                alert('Lesson completed! 🎉');
+            }
+        }
+        
+        // Initialize SCORM (if available)
+        window.addEventListener('load', function() {
+            console.log('🚀 SCORM content loaded successfully!');
+        });
+    </script>
+</body>
+</html>

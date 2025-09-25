@@ -1,0 +1,283 @@
+/* Wizard Styles for SCORM Generator */
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5f5f5;
+  font-family: sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  padding: 40px;
+}
+
+/* Wizard Menu Specific Styles */
+.container.menu {
+  max-width: 600px;
+  margin: 60px auto;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+/* Page Header Styles */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 2.2rem;
+}
+
+.page-header .subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Example Section Styles */
+.example-section {
+  margin-bottom: 40px;
+  padding: 25px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.example-section h3 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-size: 1.3rem;
+}
+
+.example-section p {
+  margin-bottom: 20px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.example-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.example-btn {
+  padding: 12px 16px;
+  border: 2px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #495057;
+}
+
+.example-btn:hover {
+  border-color: #2196F3;
+  background: #e3f2fd;
+  color: #1976d2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+}
+
+p {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.wizard-btn {
+  display: block;
+  width: 100%;
+  margin: 20px 0;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: #2196F3;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wizard-btn:hover {
+  background: #1769aa;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 30px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="url"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input[readonly] {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+#monacoConfigCode,
+#monacoStartingCode {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.submit-btn {
+  padding: 15px 30px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover {
+  background: #1769aa;
+}
+
+.reset-btn {
+  padding: 15px 30px;
+  background: #757575;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-btn:hover {
+  background: #616161;
+}
+
+.clear-btn {
+  padding: 15px 30px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #d32f2f;
+}
+
+.back-btn {
+  margin-top: 20px;
+  display: inline-block;
+  padding: 10px 24px;
+  background: #888;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Success Page Styles */
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-align: center;
+  display: block;
+}
+
+.success-title {
+  color: #4CAF50;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.info-value {
+  color: #666;
+  font-family: monospace;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 15px 30px;
+  background: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 10px 5px;
+}

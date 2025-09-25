@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Code Practice Object</title>
+  <link rel="stylesheet" href="/public/css/wizard.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Code Practice Object</h1>
+      <p class="subtitle">Create an interactive coding exercise for your students</p>
+    </div>
+    
+    <div class="example-section">
+      <h3>Quick Start Examples</h3>
+      <p>Load a pre-built example to get started quickly:</p>
+      <div class="example-buttons">
+        <button type="button" class="example-btn" data-language="javascript">
+          📜 JavaScript Example
+        </button>
+        <button type="button" class="example-btn" data-language="python">
+          🐍 Python Example
+        </button>
+        <button type="button" class="example-btn" data-language="csharp">
+          ⚡ C# Example
+        </button>
+        <button type="button" class="example-btn" data-language="java">
+          ☕ Java Example
+        </button>
+        <button type="button" class="example-btn" data-language="cpp">
+          ⚙️ C++ Example
+        </button>
+        <button type="button" class="example-btn" data-language="php">
+          🐘 PHP Example
+        </button>
+        <button type="button" class="example-btn" data-language="powershell">
+          💙 PowerShell Example
+        </button>
+      </div>
+    </div>
+    
+    <form id="editorForm" action="/generate" method="post">
+      <input type="hidden" name="objectType" value="code-practice">
+      
+      <div class="form-group">
+        <label for="courseTitle">Course Title</label>
+        <input type="text" id="courseTitle" name="courseTitle" value="Modern JavaScript" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="practiceTitle">Practice Title</label>
+        <input type="text" id="practiceTitle" name="practiceTitle" value="Code Practice 1.1" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="objectId">Object ID</label>
+        <input type="text" id="objectId" name="objectId" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="language">Programming Language</label>
+        <select id="language" name="language" required>
+          <option value="">-- Select Language --</option>
+          <option value="csharp">C#</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+          <option value="javascript" selected>JavaScript</option>
+          <option value="php">PHP</option>
+          <option value="powershell">Powershell</option>
+          <option value="python">Python</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="instructions">Instructions for Students</label>
+        <textarea id="instructions" name="instructions" required placeholder="Describe what students need to do...">Complete the functions that have been started for you.</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="configCode">Configuration Code (optional)</label>
+        <div id="monacoConfigCode"></div>
+        <textarea id="configCode" name="configCode" style="display:none;"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="startingCode">Starting Code</label>
+        <div id="monacoStartingCode"></div>
+        <textarea id="startingCode" name="startingCode" style="display:none;"></textarea>
+      </div>
+      
+      <div class="button-group">
+        <button type="submit" class="submit-btn">Generate Code Practice SCORM Object</button>
+        <button type="button" id="clearBtn" class="clear-btn">Clear Saved Work</button>
+      </div>
+      
+      <div id="savedDataNotice" style="display:none; margin-top: 15px; padding: 10px; background: #e8f4fd; border: 1px solid #bee5eb; border-radius: 8px; font-size: 14px;">
+        📁 <strong>Saved form data detected.</strong> Your previous work has been restored.
+      </div>
+    </form>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js"></script>
+  <script>
+    // Demo code templates
+    const DEMO_CONFIG_CODE = `// Configuration code runs before student code
+// This code is hidden from students and sets up the environment
+const runTests = () => {
+	console.log("Running tests...")
+
+	// check addNumbers:
+	const sum = addNumbers(15, 25)
+	console.log("addNumbers(15, 25) = " + sum, sum === 40 ? "Correct!" : "Incorrect")
+
+	// check isEven:
+	const evenTest = isEven(8)
+	console.log("isEven(8) = " + evenTest, evenTest === true ? "Correct!" : "Incorrect")
+}
+
+// The student code will be inserted here:
+/*{{student_code}}*/
+
+// Testing student functions
+runTests()
+`;
+
+    const DEMO_STARTING_CODE = `// Hello /*{{first_name}}*/! Welcome to your coding assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+// 1. Create a function that adds two numbers
+function addNumbers(a, b) {
+    // TODO: Write your code here
+
+}
+
+// 2. Create a function that checks if a number is even (Hint: number % 2 === 0)
+function isEven(num) {
+    // TODO: Write your code here
+
+}
+`;
+
+    // Example templates for different languages
+    const EXAMPLES = {
+      javascript: {
+        courseTitle: "Modern JavaScript",
+        practiceTitle: "JavaScript Fundamentals",
+        language: "javascript",
+        instructions: "Complete the functions that have been started for you.",
+        configCode: `// Configuration code runs before student code
+// This code is hidden from students and sets up the environment
+const runTests = () => {
+	console.log("Running tests...")
+
+	// check addNumbers:
+	const sum = addNumbers(15, 25)
+	console.log("addNumbers(15, 25) = " + sum, sum === 40 ? "Correct!" : "Incorrect")
+
+	// check isEven:
+	const evenTest = isEven(8)
+	console.log("isEven(8) = " + evenTest, evenTest === true ? "Correct!" : "Incorrect")
+}
+
+// The student code will be inserted here:
+/*{{student_code}}*/
+
+// Testing student functions
+runTests()`,
+        startingCode: `// Hello /*{{first_name}}*/! Welcome to your coding assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+// 1. Create a function that adds two numbers
+function addNumbers(a, b) {
+    // TODO: Write your code here
+
+}
+
+// 2. Create a function that checks if a number is even (Hint: number % 2 === 0)
+function isEven(num) {
+    // TODO: Write your code here
+
+}`
+      },
+      python: {
+        courseTitle: "Python Programming",
+        practiceTitle: "Python Basics",
+        language: "python",
+        instructions: "Complete the functions using proper Python syntax.",
+        configCode: `# Configuration code runs before student code
+# This code is hidden from students and sets up the environment
+
+def run_tests():
+    print("Running tests...")
+    
+    # Test add_numbers function
+    result = add_numbers(15, 25)
+    print(f"add_numbers(15, 25) = {result}", "Correct!" if result == 40 else "Incorrect")
+    
+    # Test is_even function
+    even_test = is_even(8)
+    print(f"is_even(8) = {even_test}", "Correct!" if even_test == True else "Incorrect")
+
+# Student code will be inserted here:
+#{{student_code}}
+
+# Run the tests
+run_tests()`,
+        startingCode: `# Hello #{{first_name}}! Welcome to your Python assignment.
+# Student ID: #{{id}} | Course: #{{course_title}}
+# Assignment: #{{practice_title}}
+
+# 1. Create a function that adds two numbers
+def add_numbers(a, b):
+    # TODO: Write your code here
+    pass
+
+# 2. Create a function that checks if a number is even
+def is_even(num):
+    # TODO: Write your code here
+    pass`
+      },
+      csharp: {
+        courseTitle: "C# Programming",
+        practiceTitle: "C# Fundamentals",
+        language: "csharp",
+        instructions: "Complete the C# methods using proper syntax and conventions.",
+        configCode: `// Configuration code runs before student code
+using System;
+
+public class TestRunner 
+{
+    public static void RunTests() 
+    {
+        Console.WriteLine("Running tests...");
+        
+        // Test AddNumbers method
+        int sum = Program.AddNumbers(15, 25);
+        Console.WriteLine($"AddNumbers(15, 25) = {sum} {(sum == 40 ? "Correct!" : "Incorrect")}");
+        
+        // Test IsEven method  
+        bool evenTest = Program.IsEven(8);
+        Console.WriteLine($"IsEven(8) = {evenTest} {(evenTest == true ? "Correct!" : "Incorrect")}");
+    }
+}
+
+// Student code will be inserted here:
+/*{{student_code}}*/`,
+        startingCode: `// Hello /*{{first_name}}*/! Welcome to your C# assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+using System;
+
+public class Program
+{
+    // 1. Create a method that adds two numbers
+    public static int AddNumbers(int a, int b)
+    {
+        // TODO: Write your code here
+        return 0;
+    }
+
+    // 2. Create a method that checks if a number is even
+    public static bool IsEven(int num)
+    {
+        // TODO: Write your code here
+        return false;
+    }
+    
+    public static void Main()
+    {
+        TestRunner.RunTests();
+    }
+}`
+      },
+      java: {
+        courseTitle: "Java Programming",
+        practiceTitle: "Java Fundamentals",
+        language: "java",
+        instructions: "Complete the Java methods using proper syntax and conventions.",
+        configCode: `// Configuration code runs before student code
+public class TestRunner {
+    public static void runTests() {
+        System.out.println("Running tests...");
+        
+        // Test addNumbers method
+        int sum = Main.addNumbers(15, 25);
+        System.out.println("addNumbers(15, 25) = " + sum + " " + (sum == 40 ? "Correct!" : "Incorrect"));
+        
+        // Test isEven method
+        boolean evenTest = Main.isEven(8);
+        System.out.println("isEven(8) = " + evenTest + " " + (evenTest == true ? "Correct!" : "Incorrect"));
+    }
+}
+
+// Student code will be inserted here:
+/*{{student_code}}*/`,
+        startingCode: `// Hello /*{{first_name}}*/! Welcome to your Java assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+public class Main {
+    // 1. Create a method that adds two numbers
+    public static int addNumbers(int a, int b) {
+        // TODO: Write your code here
+        return 0;
+    }
+
+    // 2. Create a method that checks if a number is even
+    public static boolean isEven(int num) {
+        // TODO: Write your code here
+        return false;
+    }
+    
+    public static void main(String[] args) {
+        TestRunner.runTests();
+    }
+}`
+      },
+      cpp: {
+        courseTitle: "C++ Programming", 
+        practiceTitle: "C++ Fundamentals",
+        language: "cpp",
+        instructions: "Complete the C++ functions using proper syntax.",
+        configCode: `#include <iostream>
+using namespace std;
+
+// Function prototypes
+int addNumbers(int a, int b);
+bool isEven(int num);
+
+void runTests() {
+    cout << "Running tests..." << endl;
+    
+    // Test addNumbers function
+    int sum = addNumbers(15, 25);
+    cout << "addNumbers(15, 25) = " << sum << " " << (sum == 40 ? "Correct!" : "Incorrect") << endl;
+    
+    // Test isEven function
+    bool evenTest = isEven(8);
+    cout << "isEven(8) = " << (evenTest ? "true" : "false") << " " << (evenTest == true ? "Correct!" : "Incorrect") << endl;
+}
+
+// Student code will be inserted here:
+/*{{student_code}}*/
+
+int main() {
+    runTests();
+    return 0;
+}`,
+        startingCode: `// Hello /*{{first_name}}*/! Welcome to your C++ assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+// 1. Create a function that adds two numbers
+int addNumbers(int a, int b) {
+    // TODO: Write your code here
+    return 0;
+}
+
+// 2. Create a function that checks if a number is even (Hint: use %)
+bool isEven(int num) {
+    // TODO: Write your code here
+    return false;
+}`
+      },
+      php: {
+        courseTitle: "PHP Programming",
+        practiceTitle: "PHP Fundamentals", 
+        language: "php",
+        instructions: "Complete the PHP functions using proper syntax.",
+        configCode: `<?php
+// Configuration code runs before student code
+
+function runTests() {
+    echo "Running tests...\\n";
+    
+    // Test addNumbers function
+    $sum = addNumbers(15, 25);
+    echo "addNumbers(15, 25) = $sum " . ($sum == 40 ? "Correct!" : "Incorrect") . "\\n";
+    
+    // Test isEven function
+    $evenTest = isEven(8);
+    echo "isEven(8) = " . ($evenTest ? "true" : "false") . " " . ($evenTest === true ? "Correct!" : "Incorrect") . "\\n";
+}
+
+// Student code will be inserted here:
+/*{{student_code}}*/
+
+// Run tests
+runTests();
+?>`,
+        startingCode: `<?php
+// Hello /*{{first_name}}*/! Welcome to your PHP assignment.
+// Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
+// Assignment: /*{{practice_title}}*/
+
+// 1. Create a function that adds two numbers
+function addNumbers($a, $b) {
+    // TODO: Write your code here
+    return 0;
+}
+
+// 2. Create a function that checks if a number is even
+function isEven($num) {
+    // TODO: Write your code here
+    return false;
+}
+?>`
+      },
+      powershell: {
+        courseTitle: "PowerShell Scripting",
+        practiceTitle: "PowerShell Fundamentals",
+        language: "powershell", 
+        instructions: "Complete the PowerShell functions using proper syntax.",
+        configCode: `<#
+Configuration code runs before student code
+This code is hidden from students and sets up the environment
+Welcome <#{{first_name}}#> <#{{last_name}}#>!
+#>
+
+function Run-Tests {
+    Write-Host "Running tests..."
+    
+    # Test Add-Numbers function
+    $sum = Add-Numbers 15 25
+    Write-Host "Add-Numbers 15 25 = $sum" $(if($sum -eq 40) {"Correct!"} else {"Incorrect"})
+    
+    # Test Test-IsEven function  
+    $evenTest = Test-IsEven 8
+    Write-Host "Test-IsEven 8 = $evenTest" $(if($evenTest -eq $true) {"Correct!"} else {"Incorrect"})
+}
+
+# Student code will be inserted here:
+<#{{student_code}}#>
+
+# Run the tests
+Run-Tests`,
+        startingCode: `<#
+Welcome <#{{first_name}}#> <#{{last_name}}#>!
+Student ID: <#{{id}}#>
+Course: <#{{course_title}}#>
+Assignment: <#{{practice_title}}#>
+#>
+
+# 1. Create a function that adds two numbers
+function Add-Numbers($a, $b) {
+    # TODO: Write your code here
+    return 0
+}
+
+# 2. Create a function that checks if a number is even
+function Test-IsEven($num) {
+    # TODO: Write your code here
+    return $false
+}`
+      }
+    };
+
+    // Monaco language mapping
+    function getMonacoLanguage(language) {
+      const languageMap = {
+        'javascript': 'javascript',
+        'python': 'python',
+        'csharp': 'csharp',
+        'java': 'java',
+        'cpp': 'cpp',
+        'php': 'php',
+        'powershell': 'powershell'
+      };
+      return languageMap[language] || 'javascript';
+    }
+
+    function loadMonaco() {
+      if (typeof require === 'function') {
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' } });
+        require(['vs/editor/editor.main'], function() {
+          
+          // Check for saved data first
+          let savedData = null;
+          try {
+            const storedData = localStorage.getItem('codePracticeFormData');
+            savedData = storedData ? JSON.parse(storedData) : null;
+            console.log('Retrieved saved data:', savedData);
+          } catch (e) {
+            console.warn('Failed to load saved data:', e);
+            savedData = null;
+          }
+          
+          // Determine what code to load - all or nothing approach
+          let configCode, startingCode;
+          
+          if (savedData) {
+            // Use saved data completely (even if some fields are empty)
+            configCode = savedData.configCode || ''; // Allow empty config code
+            startingCode = savedData.startingCode || DEMO_STARTING_CODE; // Starting code should have something
+            console.log('Using saved data (all or nothing)');
+          } else {
+            // No saved data, use demo defaults
+            configCode = DEMO_CONFIG_CODE;
+            startingCode = DEMO_STARTING_CODE;
+            console.log('No saved data, using demo defaults');
+          }
+          
+          console.log('Loading Monaco with:', {
+            hasSavedData: !!savedData,
+            configLength: configCode.length,
+            startingLength: startingCode.length,
+            configIsEmpty: configCode === ''
+          });
+          
+          // Create Monaco editors with proper error handling
+          try {
+            // Get the current language selection for syntax highlighting
+            const currentLanguage = document.getElementById('language').value || 'javascript';
+            const monacoLanguage = getMonacoLanguage(currentLanguage);
+            
+            window.monacoConfigEditor = monaco.editor.create(document.getElementById('monacoConfigCode'), {
+              value: configCode, // Use the determined config code (could be empty)
+              language: monacoLanguage,
+              theme: 'vs-light',
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineNumbers: 'on',
+              automaticLayout: true,
+              wordWrap: 'on',
+              scrollBeyondLastLine: false
+            });
+            
+            window.monacoStartingEditor = monaco.editor.create(document.getElementById('monacoStartingCode'), {
+              value: startingCode, // Use the determined starting code
+              language: monacoLanguage,
+              theme: 'vs-light',
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineNumbers: 'on',
+              automaticLayout: true,
+              wordWrap: 'on',
+              scrollBeyondLastLine: false
+            });
+            
+            console.log('Monaco editors created successfully');
+            
+          } catch (editorError) {
+            console.error('Failed to create Monaco editors:', editorError);
+            alert('Failed to initialize code editors. Please refresh the page.');
+            return;
+          }
+          
+          // Auto-generate Object ID function
+          function generateObjectId() {
+            try {
+              const courseTitle = document.getElementById('courseTitle').value.trim();
+              const practiceTitle = document.getElementById('practiceTitle').value.trim();
+              let objectId = '';
+              
+              if (courseTitle || practiceTitle) {
+                objectId = (courseTitle + '-' + practiceTitle)
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, '-')
+                  .replace(/^-+|-+$/g, '')
+                  .replace(/-+/g, '-');
+              }
+              
+              const objectIdField = document.getElementById('objectId');
+              if (objectIdField) {
+                objectIdField.value = objectId;
+                console.log('Generated object ID:', objectId);
+              }
+            } catch (error) {
+              console.error('Error generating object ID:', error);
+            }
+          }
+          
+          // Attach event listeners with error handling
+          try {
+            const courseTitleField = document.getElementById('courseTitle');
+            const practiceTitleField = document.getElementById('practiceTitle');
+            
+            if (courseTitleField) {
+              courseTitleField.addEventListener('input', generateObjectId);
+            }
+            if (practiceTitleField) {
+              practiceTitleField.addEventListener('input', generateObjectId);
+            }
+            
+            console.log('Event listeners attached successfully');
+          } catch (listenerError) {
+            console.error('Failed to attach event listeners:', listenerError);
+          }
+          
+          // Clear storage button handler
+          const clearBtn = document.getElementById('clearBtn');
+          if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+              if (confirm('Clear all saved work, form fields, and code editors? This cannot be undone!')) {
+                localStorage.removeItem('codePracticeFormData');
+                
+                // Clear Monaco editors
+                if (window.monacoConfigEditor && window.monacoStartingEditor) {
+                  window.monacoConfigEditor.setValue('');
+                  window.monacoStartingEditor.setValue('');
+                }
+                
+                // Clear form fields too
+                const fields = ['courseTitle', 'practiceTitle', 'objectId', 'language', 'instructions'];
+                fields.forEach(fieldId => {
+                  const field = document.getElementById(fieldId);
+                  if (field) field.value = '';
+                });
+                
+                const notice = document.getElementById('savedDataNotice');
+                if (notice) notice.style.display = 'none';
+                
+                alert('All saved work, form fields, and code editors have been cleared!');
+              }
+            });
+          }
+          
+          // Language change handler
+          const languageSelect = document.getElementById('language');
+          if (languageSelect) {
+            languageSelect.addEventListener('change', function() {
+              const selectedLang = this.value;
+              const monacoLang = getMonacoLanguage(selectedLang);
+              
+              if (window.monacoConfigEditor && window.monacoStartingEditor) {
+                try {
+                  monaco.editor.setModelLanguage(window.monacoConfigEditor.getModel(), monacoLang);
+                  monaco.editor.setModelLanguage(window.monacoStartingEditor.getModel(), monacoLang);
+                  console.log(`Updated Monaco editor language to: ${monacoLang}`);
+                } catch (langError) {
+                  console.error('Failed to set language:', langError);
+                }
+              }
+            });
+          }
+          
+          // Form submission
+          const editorForm = document.getElementById('editorForm');
+          if (editorForm) {
+            editorForm.addEventListener('submit', function(e) {
+              try {
+                // Set hidden form values before submission
+                const configCodeField = document.getElementById('configCode');
+                const startingCodeField = document.getElementById('startingCode');
+                
+                if (configCodeField && window.monacoConfigEditor) {
+                  configCodeField.value = window.monacoConfigEditor.getValue();
+                }
+                if (startingCodeField && window.monacoStartingEditor) {
+                  startingCodeField.value = window.monacoStartingEditor.getValue();
+                }
+                
+                // Save form data
+                saveFormData();
+              } catch (submitError) {
+                console.error('Form submission error:', submitError);
+              }
+            });
+          }
+          
+          // Restore saved form data if it exists
+          if (savedData) {
+            try {
+              const savedDataNotice = document.getElementById('savedDataNotice');
+              if (savedDataNotice) {
+                savedDataNotice.style.display = 'block';
+              }
+              
+              // Restore form fields only if they have saved values (preserve HTML defaults)
+              const fieldsToRestore = {};
+              
+              if (savedData.courseTitle) fieldsToRestore.courseTitle = savedData.courseTitle;
+              if (savedData.practiceTitle) fieldsToRestore.practiceTitle = savedData.practiceTitle;
+              if (savedData.objectId) fieldsToRestore.objectId = savedData.objectId;
+              if (savedData.language) fieldsToRestore.language = savedData.language;
+              if (savedData.instructions) fieldsToRestore.instructions = savedData.instructions;
+              
+              Object.entries(fieldsToRestore).forEach(([fieldId, value]) => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                  field.value = value;
+                  console.log(`Restored ${fieldId}:`, value);
+                }
+              });
+              
+              // Trigger object ID generation after restoring data
+              generateObjectId();
+              
+              // Update language if set
+              if (savedData.language && languageSelect) {
+                languageSelect.dispatchEvent(new Event('change'));
+              }
+              
+              console.log('Form data restored successfully');
+            } catch (restoreError) {
+              console.error('Failed to restore form data:', restoreError);
+            }
+          } else {
+            // No saved data, generate object ID from default values
+            generateObjectId();
+          }
+          
+        });
+      } else {
+        setTimeout(loadMonaco, 100);
+      }
+    }
+
+    // Save form data to localStorage
+    function saveFormData() {
+      try {
+        const fields = {
+          courseTitle: document.getElementById('courseTitle'),
+          practiceTitle: document.getElementById('practiceTitle'),
+          objectId: document.getElementById('objectId'),
+          language: document.getElementById('language'),
+          instructions: document.getElementById('instructions')
+        };
+        
+        const formData = {
+          courseTitle: fields.courseTitle ? fields.courseTitle.value : '',
+          practiceTitle: fields.practiceTitle ? fields.practiceTitle.value : '',
+          objectId: fields.objectId ? fields.objectId.value : '',
+          language: fields.language ? fields.language.value : '',
+          instructions: fields.instructions ? fields.instructions.value : '',
+          configCode: window.monacoConfigEditor ? window.monacoConfigEditor.getValue() : '',
+          startingCode: window.monacoStartingEditor ? window.monacoStartingEditor.getValue() : ''
+        };
+        
+        localStorage.setItem('codePracticeFormData', JSON.stringify(formData));
+        console.log('Form data saved successfully');
+      } catch (error) {
+        console.error('Failed to save form data:', error);
+      }
+    }
+
+    // Auto-save every 30 seconds with better error handling
+    setInterval(function() {
+      try {
+        const courseTitleField = document.getElementById('courseTitle');
+        const practiceTitleField = document.getElementById('practiceTitle');
+        
+        if ((courseTitleField && courseTitleField.value.trim()) || 
+            (practiceTitleField && practiceTitleField.value.trim()) ||
+            (window.monacoStartingEditor && window.monacoStartingEditor.getValue().trim())) {
+          saveFormData();
+        }
+      } catch (autoSaveError) {
+        console.error('Auto-save failed:', autoSaveError);
+      }
+    }, 30000);
+
+    // Example button handlers
+    document.addEventListener('DOMContentLoaded', function() {
+      const exampleButtons = document.querySelectorAll('.example-btn');
+      exampleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const language = this.dataset.language;
+          const example = EXAMPLES[language];
+          
+          if (example) {
+            // Populate form fields
+            document.getElementById('courseTitle').value = example.courseTitle;
+            document.getElementById('practiceTitle').value = example.practiceTitle;
+            document.getElementById('language').value = example.language;
+            document.getElementById('instructions').value = example.instructions;
+            
+            // Update Monaco editors if they're loaded
+            if (window.monacoConfigEditor) {
+              window.monacoConfigEditor.setValue(example.configCode);
+              // Update language for syntax highlighting
+              monaco.editor.setModelLanguage(
+                window.monacoConfigEditor.getModel(), 
+                getMonacoLanguage(example.language)
+              );
+            }
+            if (window.monacoStartingEditor) {
+              window.monacoStartingEditor.setValue(example.startingCode);
+              // Update language for syntax highlighting
+              monaco.editor.setModelLanguage(
+                window.monacoStartingEditor.getModel(), 
+                getMonacoLanguage(example.language)
+              );
+            }
+            
+            // Generate object ID
+            const courseTitle = example.courseTitle;
+            const practiceTitle = example.practiceTitle;
+            const objectId = (courseTitle + ' ' + practiceTitle)
+              .toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .replace(/\s+/g, '-')
+              .replace(/-+/g, '-')
+              .replace(/^-|-$/g, '');
+            document.getElementById('objectId').value = objectId;
+            
+            // Visual feedback
+            this.style.background = '#4caf50';
+            this.style.color = 'white';
+            this.style.borderColor = '#4caf50';
+            setTimeout(() => {
+              this.style.background = 'white';
+              this.style.color = '#495057';
+              this.style.borderColor = '#dee2e6';
+            }, 1000);
+            
+            console.log(`Loaded ${language} example successfully`);
+          }
+        });
+      });
+    });
+
+    window.onload = loadMonaco;
+  </script>
+</body>
+</html>

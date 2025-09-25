@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORM Package Generated Successfully</title>
+    <link rel="stylesheet" href="/public/css/wizard.css">
+</head>
+<body class="success">
+    <div class="container success">
+        <div class="success-icon">✅</div>
+        <h1 class="success">Package Generated Successfully!</h1>
+        <p>Your SCORM package has been created and is ready for download.</p>
+        
+        <div class="info-card">
+            <div class="info-item">
+                <span class="info-label">SCORM Version:</span>
+                <span class="info-value"><%= buildInfo.scormVersion %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">File Name:</span>
+                <span class="info-value"><%= buildInfo.fileName %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Package Location:</span>
+                <span class="info-value"><%= buildInfo.zipPath %></span>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="<%= buildInfo.downloadUrl %>" class="submit-btn download-btn">
+                📥 Download SCORM Package
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 0.9rem; color: #888;">
+            📝 <strong>Form Data Saved:</strong> Your form data has been automatically saved. If you need to make changes, go back to create a new package and your previous settings will be restored.<br>
+            💡 <strong>Tip:</strong> Upload this package to your LMS to test and deploy your SCORM content.
+        </p>
+    </div>
+</body>
+</html>

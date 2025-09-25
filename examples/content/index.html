@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample SCORM Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .content {
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f8ff;
+            border-left: 4px solid #2196F3;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Sample SCORM Course</h1>
+        
+        <div class="content">
+            <h2>Welcome to Your SCORM Course!</h2>
+            <p>This is a sample SCORM content page. In a real course, you would include:</p>
+            
+            <ul>
+                <li>Interactive learning content</li>
+                <li>Videos, images, and multimedia</li>
+                <li>Quizzes and assessments</li>
+                <li>Progress tracking</li>
+                <li>Navigation controls</li>
+            </ul>
+            
+            <div class="progress">
+                <strong>📊 Progress Tracking:</strong> This content can communicate with your LMS to track completion, scores, and time spent.
+            </div>
+            
+            <h3>Getting Started</h3>
+            <p>To customize this content:</p>
+            <ol>
+                <li>Replace this HTML file with your own content</li>
+                <li>Add your images, videos, and other assets</li>
+                <li>Include SCORM API calls for tracking (optional)</li>
+                <li>Update the course specification JSON</li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="completeLesson()">✅ Mark as Complete</button>
+            <button onclick="showProgress()">📊 View Progress</button>
+        </div>
+    </div>
+    
+    <script>
+        // Basic SCORM API integration (optional)
+        function completeLesson() {
+            alert('Lesson marked as complete! 🎉\n\nIn a real SCORM package, this would communicate with your LMS.');
+            // In real SCORM: 
+            // scormAPI.SetValue('cmi.core.lesson_status', 'completed');
+            // scormAPI.Commit('');
+        }
+        
+        function showProgress() {
+            alert('📈 Progress: 100% Complete\n\nThis is sample data. Real SCORM packages track actual progress.');
+        }
+        
+        // Initialize SCORM (if available)
+        window.addEventListener('load', function() {
+            console.log('🚀 SCORM content loaded successfully!');
+            // In real SCORM: initialize API connection here
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SCORM Object Generator</title>
+  <link rel="stylesheet" href="/public/css/wizard.css">
+</head>
+<body>
+  <div class="container menu">
+    <h1>SCORM Object Generator</h1>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error-message" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <strong>Error:</strong> <%= error %>
+      </div>
+    <% } %>
+    
+    <form action="/code-practice" method="get">
+      <button type="submit" class="wizard-btn">Code Practice Object</button>
+    </form>
+    <form action="/lecture" method="get">
+      <button type="submit" class="wizard-btn">Lecture Object</button>
+    </form>
+  </div>
+</body>
+</html>
