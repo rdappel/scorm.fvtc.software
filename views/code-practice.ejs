@@ -231,48 +231,48 @@ using System;
 
 public class TestRunner 
 {
-    public static void RunTests() 
+    public void RunTests() 
     {
         Console.WriteLine("Running tests...");
         
         // Test AddNumbers method
-        int sum = Program.AddNumbers(15, 25);
+        int sum = AddNumbers(15, 25);
         Console.WriteLine($"AddNumbers(15, 25) = {sum} {(sum == 40 ? "Correct!" : "Incorrect")}");
         
         // Test IsEven method  
-        bool evenTest = Program.IsEven(8);
+        bool evenTest = IsEven(8);
         Console.WriteLine($"IsEven(8) = {evenTest} {(evenTest == true ? "Correct!" : "Incorrect")}");
     }
+
+	// Student code will be inserted here:
+	/*{{student_code}}*/
 }
 
-// Student code will be inserted here:
-/*{{student_code}}*/`,
+public class Program
+{    
+    public static void Main()
+    {
+		TestRunner runner = new TestRunner();
+        runner.RunTests();
+    }
+}
+`,
         startingCode: `// Hello /*{{first_name}}*/! Welcome to your C# assignment.
 // Student ID: /*{{id}}*/ | Course: /*{{course_title}}*/
 // Assignment: /*{{practice_title}}*/
 
-using System;
-
-public class Program
+// 1. Create a method that adds two numbers
+public int AddNumbers(int a, int b)
 {
-    // 1. Create a method that adds two numbers
-    public static int AddNumbers(int a, int b)
-    {
-        // TODO: Write your code here
-        return 0;
-    }
+	// TODO: Write your code here
+	return 0;
+}
 
-    // 2. Create a method that checks if a number is even
-    public static bool IsEven(int num)
-    {
-        // TODO: Write your code here
-        return false;
-    }
-    
-    public static void Main()
-    {
-        TestRunner.RunTests();
-    }
+// 2. Create a method that checks if a number is even
+public bool IsEven(int num)
+{
+	// TODO: Write your code here
+	return false;
 }`
       },
       java: {

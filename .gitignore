@@ -1,2 +1,8 @@
 
 node_modules/
+
+# Ignore everything in myfolder
+dist/*
+
+# But keep the .gitkeep file
+!dist/.gitkeep

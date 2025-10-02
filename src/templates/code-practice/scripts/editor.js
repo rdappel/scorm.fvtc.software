@@ -612,20 +612,103 @@ window.MonacoEnvironment = {
     `)}`
 }
 
-const loaderScript = document.createElement('script')
-loaderScript.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js'
-loaderScript.onload = () => {
-	// Load language extensions dynamically based on selected language
-	if (language === 'csharp' || language === 'csharp.net') {
-		const csharpScript = document.createElement('script')
-		csharpScript.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/basic-languages/csharp/csharp.js'
-		csharpScript.onload = () => initMonaco()
-		document.head.appendChild(csharpScript)
-	} else {
-		initMonaco()
+// Track Monaco loading state
+let monacoInitialized = false;
+let monacoInitializing = false;
+
+// Ensure DOM is ready before Monaco initialization
+const ensureDOMReady = () => {
+	return new Promise((resolve) => {
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', resolve, { once: true });
+		} else {
+			resolve();
+		}
+	});
+};
+
+// Robust Monaco loader with retry logic
+const initializeMonaco = async () => {
+	if (monacoInitialized || monacoInitializing) {
+		console.log('Monaco already initialized or initializing');
+		return;
 	}
+	
+	monacoInitializing = true;
+	console.log('Starting Monaco initialization...');
+	
+	try {
+		// Ensure DOM is ready
+		await ensureDOMReady();
+		
+		// Check if editor div exists
+		const editorDiv = document.querySelector('#editor');
+		if (!editorDiv) {
+			console.error('Editor div not found, retrying in 500ms...');
+			setTimeout(initializeMonaco, 500);
+			monacoInitializing = false;
+			return;
+		}
+		
+		// Load Monaco with proper error handling
+		await new Promise((resolve, reject) => {
+			const loaderScript = document.createElement('script');
+			loaderScript.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js';
+			loaderScript.onload = () => {
+				console.log('Monaco loader script loaded');
+				resolve();
+			};
+			loaderScript.onerror = (error) => {
+				console.error('Failed to load Monaco loader script:', error);
+				reject(error);
+			};
+			
+			// Set a timeout for loading
+			setTimeout(() => {
+				if (!loaderScript.onload.called) {
+					reject(new Error('Monaco loader script timeout'));
+				}
+			}, 10000);
+			
+			document.head.appendChild(loaderScript);
+		});
+		
+		// Load language extensions if needed
+		if (language === 'csharp' || language === 'csharp.net') {
+			await new Promise((resolve, reject) => {
+				const csharpScript = document.createElement('script');
+				csharpScript.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/basic-languages/csharp/csharp.js';
+				csharpScript.onload = () => {
+					console.log('C# language support loaded');
+					resolve();
+				};
+				csharpScript.onerror = reject;
+				document.head.appendChild(csharpScript);
+			});
+		}
+		
+		// Initialize Monaco editor
+		initMonaco();
+		
+	} catch (error) {
+		console.error('Monaco initialization failed:', error);
+		monacoInitializing = false;
+		
+		// Retry after a delay
+		setTimeout(() => {
+			console.log('Retrying Monaco initialization...');
+			initializeMonaco();
+		}, 2000);
+	}
+};
+
+// Start Monaco initialization when script loads
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', initializeMonaco, { once: true });
+} else {
+	// DOM already loaded, start immediately but with a small delay to ensure everything is ready
+	setTimeout(initializeMonaco, 100);
 }
-document.head.appendChild(loaderScript)
 
 // UI value -> Monaco language id (syntax highlighting)
 const LANGUAGE_MAP = {
@@ -765,168 +848,261 @@ const syncOutputColors = editor => {
 
 // Initialize Monaco and wire UI
 const initMonaco = () => {
-	require(['vs/editor/editor.main'], () => {
-		const runButton = document.querySelector('#run')
-		const resetButton = document.querySelector('#reset')
-		const submitButton = document.querySelector('#submit')
-		const editorDiv = document.querySelector('#editor')
+	if (monacoInitialized) {
+		console.log('Monaco already initialized, skipping...');
+		return;
+	}
+	
+	console.log('Initializing Monaco editor...');
+	
+	try {
+		require(['vs/editor/editor.main'], () => {
+			console.log('Monaco editor main loaded');
+			
+			// Verify required DOM elements exist
+			const runButton = document.querySelector('#run');
+			const resetButton = document.querySelector('#reset');
+			const submitButton = document.querySelector('#submit');
+			const editorDiv = document.querySelector('#editor');
 
-		// Generate unique localStorage key from header
-		const courseTitle = document.querySelector('.course-title')?.textContent?.trim() || 'course'
-		const assignmentTitle = document.querySelector('.assignment-title')?.textContent?.trim() || 'assignment'
-		const storageKey = `editor.code.${courseTitle.replace(/\s+/g, '_')}.${assignmentTitle.replace(/\s+/g, '_')}`
-
-		// Keyboard shortcuts: Ctrl+S to save, Ctrl+R to run
-		document.addEventListener('keydown', e => {
-			if (e.ctrlKey && e.key.toLowerCase() === 's') {
-				e.preventDefault();
-				localStorage.setItem(storageKey, editor.getValue());
+			if (!editorDiv) {
+				console.error('Editor div not found! Retrying in 1 second...');
+				monacoInitializing = false;
+				setTimeout(initMonaco, 1000);
+				return;
 			}
-			if (e.ctrlKey && e.key.toLowerCase() === 'r') {
-				e.preventDefault();
-				runButton.click();
+
+			if (!runButton || !resetButton || !submitButton) {
+				console.warn('Some UI buttons not found, but proceeding with editor initialization');
 			}
-		});
 
-		// Run button loading animation logic (show/hide spinner/play icon)
-		const setRunButtonLoading = isLoading => {
-			const runButtonElement = document.getElementById('run')
-			if (!runButtonElement) return
-			const playIconSpan = runButtonElement.querySelector('.play-icon')
-			const spinnerSpan = runButtonElement.querySelector('.spinner')
-			if (isLoading) {
-				runButtonElement.disabled = true
-				runButtonElement.classList.add('loading')
-				if (playIconSpan) playIconSpan.style.display = 'none'
-				if (spinnerSpan) spinnerSpan.style.display = 'inline-block'
-			} else {
-				runButtonElement.disabled = false
-				runButtonElement.classList.remove('loading')
-				if (spinnerSpan) spinnerSpan.style.display = 'none'
-				if (playIconSpan) playIconSpan.style.display = 'inline-block'
-			}
-		}
-		// Get starting code from configuration or use defaults
-		const config = window.CODE_PRACTICE_CONFIG || {};
-		let initialCode = config.startingCode;
+			// Generate unique localStorage key from header
+			const courseTitle = document.querySelector('.course-title')?.textContent?.trim() || 'course';
+			const assignmentTitle = document.querySelector('.assignment-title')?.textContent?.trim() || 'assignment';
+			const storageKey = `editor.code.${courseTitle.replace(/\s+/g, '_')}.${assignmentTitle.replace(/\s+/g, '_')}`;
 
-		// Fallback to localStorage or default code if no starting code provided
-		if (!initialCode) {
-			initialCode = localStorage.getItem(storageKey);
-			if (!initialCode) {
-				const defaultPhp = `<?php\n// Default PHP code\necho 'Hello, world!';\n?>`;
-				initialCode = language === 'php' ? defaultPhp : '\n\n\n';
-			}
-		}
-
-		// Apply template variables to starting code
-		if (initialCode) {
-			initialCode = applyTemplateVariables(initialCode);
-		}
-
-		const editor = monaco.editor.create(editorDiv, {
-			value: initialCode,
-			language: LANGUAGE_MAP[language] || 'javascript',
-			theme: 'vs-dark',
-			automaticLayout: true,
-			minimap: { enabled: false },
-			wordWrap: 'on',
-			scrollBeyondLastLine: false,
-			fontSize: 16
-		})
-
-		requestAnimationFrame(() => editor.layout())
-
-		editorDiv.addEventListener('mousedown', () => editor.focus())
-
-		// Instructions text (customize as needed)
-		const instructionsDiv = document.getElementById('instructions')
-
-		const outputTypeSelect = document.getElementById('output-type')
-		// Override handleRun to use unified runCode function and switch output to program
-		const handleRunWithStore = async () => {
-			localStorage.setItem(storageKey, editor.getValue());
-			if (outputTypeSelect) outputTypeSelect.value = 'program';
-			const outputDiv = document.getElementById('output');
-			if (outputDiv) {
-				outputDiv.style.display = 'block';
-				outputDiv.textContent = '';
-			}
-			if (instructionsDiv) instructionsDiv.style.display = 'none';
-			setRunButtonLoading(true);
-			try {
-				await runCode({ language, code: editor.getValue() });
-			} finally {
-				setRunButtonLoading(false);
-			}
-		}
-		runButton.addEventListener('click', handleRunWithStore)
-		// Initial instructions display
-		const outputDiv = document.getElementById('output')
-		if (outputDiv) outputDiv.style.display = 'none'
-		if (instructionsDiv) instructionsDiv.style.display = 'block'
-		if (outputTypeSelect) {
-			outputTypeSelect.addEventListener('change', () => {
-				if (outputTypeSelect.value === 'instructions') {
-					if (outputDiv) outputDiv.style.display = 'none'
-					if (instructionsDiv) instructionsDiv.style.display = 'block'
-				} else {
-					if (outputDiv) outputDiv.style.display = 'block'
-					if (instructionsDiv) instructionsDiv.style.display = 'none'
-					let outputText = ''
-					if (outputTypeSelect.value === 'build') {
-						if (window.lastRunData) {
-							const compileOutput = `${window.lastRunData.compile?.stdout || ''}${window.lastRunData.compile?.stderr || ''}`.trim()
-							outputText = compileOutput || '(no build output)'
-						} else {
-							outputText = '(no build output)'
-						}
-					} else if (outputTypeSelect.value === 'program') {
-						if (window.lastRunData) {
-							const runOutput = `${window.lastRunData.run?.stdout || ''}${window.lastRunData.run?.stderr || ''}`.trim()
-							outputText = runOutput || '(no program output)'
-						} else {
-							outputText = '(no program output)'
-						}
+			// Keyboard shortcuts: Ctrl+S to save, Ctrl+R to run
+			document.addEventListener('keydown', e => {
+				if (e.ctrlKey && e.key.toLowerCase() === 's') {
+					e.preventDefault();
+					if (window.monacoEditor) {
+						localStorage.setItem(storageKey, window.monacoEditor.getValue());
 					}
-					if (outputDiv) outputDiv.textContent = outputText
 				}
-			})
-		}
+				if (e.ctrlKey && e.key.toLowerCase() === 'r') {
+					e.preventDefault();
+					runButton?.click();
+				}
+			});
 
-		// Reset button logic
-		resetButton.addEventListener('click', () => {
-			if (confirm('Are you sure you want to reset the code? You will lose all progress.')) {
+			// Run button loading animation logic (show/hide spinner/play icon)
+			const setRunButtonLoading = isLoading => {
+				const runButtonElement = document.getElementById('run');
+				if (!runButtonElement) return;
+				const playIconSpan = runButtonElement.querySelector('.play-icon');
+				const spinnerSpan = runButtonElement.querySelector('.spinner');
+				if (isLoading) {
+					runButtonElement.disabled = true;
+					runButtonElement.classList.add('loading');
+					if (playIconSpan) playIconSpan.style.display = 'none';
+					if (spinnerSpan) spinnerSpan.style.display = 'inline-block';
+				} else {
+					runButtonElement.disabled = false;
+					runButtonElement.classList.remove('loading');
+					if (spinnerSpan) spinnerSpan.style.display = 'none';
+					if (playIconSpan) playIconSpan.style.display = 'inline-block';
+				}
+			};
+			
+			// Get starting code from configuration or use defaults
+			const config = window.CODE_PRACTICE_CONFIG || {};
+			let initialCode = config.startingCode;
+
+			// Fallback to localStorage or default code if no starting code provided
+			if (!initialCode) {
+				initialCode = localStorage.getItem(storageKey);
+				if (!initialCode) {
+					const defaultPhp = `<?php\n// Default PHP code\necho 'Hello, world!';\n?>`;
+					initialCode = language === 'php' ? defaultPhp : '\n\n\n';
+				}
+			}
+
+			// Apply template variables to starting code
+			if (initialCode) {
+				initialCode = applyTemplateVariables(initialCode);
+			}
+
+			console.log('Creating Monaco editor instance...');
+			
+			// Create Monaco editor with error handling
+			let editor;
+			try {
+				editor = monaco.editor.create(editorDiv, {
+					value: initialCode,
+					language: LANGUAGE_MAP[language] || 'javascript',
+					theme: 'vs-dark',
+					automaticLayout: true,
+					minimap: { enabled: false },
+					wordWrap: 'on',
+					scrollBeyondLastLine: false,
+					fontSize: 16
+				});
+				
+				// Store editor globally for access
+				window.monacoEditor = editor;
+				monacoInitialized = true;
+				console.log('Monaco editor created successfully');
+				
+			} catch (editorError) {
+				console.error('Failed to create Monaco editor:', editorError);
+				monacoInitializing = false;
+				setTimeout(initMonaco, 2000);
+				return;
+			}
+
+			// Ensure proper layout after creation
+			requestAnimationFrame(() => {
+				try {
+					editor.layout();
+					console.log('Monaco editor layout completed');
+				} catch (layoutError) {
+					console.error('Editor layout error:', layoutError);
+				}
+			});
+
+			// Add click listener to focus editor
+			editorDiv.addEventListener('mousedown', () => editor.focus());
+
+			// Instructions text (customize as needed)
+			const instructionsDiv = document.getElementById('instructions');
+
+			const outputTypeSelect = document.getElementById('output-type');
+			// Override handleRun to use unified runCode function and switch output to program
+			const handleRunWithStore = async () => {
+				localStorage.setItem(storageKey, editor.getValue());
+				if (outputTypeSelect) outputTypeSelect.value = 'program';
+				const outputDiv = document.getElementById('output');
+				if (outputDiv) {
+					outputDiv.style.display = 'block';
+					outputDiv.textContent = '';
+				}
+				if (instructionsDiv) instructionsDiv.style.display = 'none';
+				setRunButtonLoading(true);
+				try {
+					await runCode({ language, code: editor.getValue() });
+				} finally {
+					setRunButtonLoading(false);
+				}
+			};
+			
+			if (runButton) {
+				runButton.addEventListener('click', handleRunWithStore);
+			}
+			
+			// Initial instructions display
+			const outputDiv = document.getElementById('output');
+			if (outputDiv) outputDiv.style.display = 'none';
+			if (instructionsDiv) instructionsDiv.style.display = 'block';
+			if (outputTypeSelect) {
+				outputTypeSelect.addEventListener('change', () => {
+					if (outputTypeSelect.value === 'instructions') {
+						if (outputDiv) outputDiv.style.display = 'none';
+						if (instructionsDiv) instructionsDiv.style.display = 'block';
+					} else {
+						if (outputDiv) outputDiv.style.display = 'block';
+						if (instructionsDiv) instructionsDiv.style.display = 'none';
+						let outputText = '';
+						if (outputTypeSelect.value === 'build') {
+							if (window.lastRunData) {
+								const compileOutput = `${window.lastRunData.compile?.stdout || ''}${window.lastRunData.compile?.stderr || ''}`.trim();
+								outputText = compileOutput || '(no build output)';
+							} else {
+								outputText = '(no build output)';
+							}
+						} else if (outputTypeSelect.value === 'program') {
+							if (window.lastRunData) {
+								const runOutput = `${window.lastRunData.run?.stdout || ''}${window.lastRunData.run?.stderr || ''}`.trim();
+								outputText = runOutput || '(no program output)';
+							} else {
+								outputText = '(no program output)';
+							}
+						}
+						if (outputDiv) outputDiv.textContent = outputText;
+					}
+				});
+			}
+
+			// Reset button logic
+			if (resetButton) {
+				resetButton.addEventListener('click', () => {
+					if (confirm('Are you sure you want to reset the code? You will lose all progress.')) {
+						const config = window.CODE_PRACTICE_CONFIG || {};
+						let originalCode = config.startingCode || '\n\n\n';
+
+						// Apply template variables to the reset code
+						originalCode = applyTemplateVariables(originalCode);
+
+						editor.setValue(originalCode);
+						localStorage.setItem(storageKey, originalCode);
+						const outputElement = document.getElementById('output');
+						if (outputElement) outputElement.textContent = '';
+					}
+				});
+			}
+
+			// Submit button logic
+			if (submitButton) {
+				submitButton.addEventListener('click', () => {
+					if (confirm('Are you sure you want to submit your code for evaluation?')) {
+						const code = editor.getValue();
+						localStorage.setItem(storageKey, code);
+
+						// Submit the code for evaluation and mark SCORM complete
+						submitCode(code);
+					}
+				});
+			}
+
+			// Show submission count on page load if any previous submissions exist
+			setTimeout(() => {
 				const config = window.CODE_PRACTICE_CONFIG || {};
-				let originalCode = config.startingCode || '\n\n\n';
+				const submissionKey = `submission_count_${config.objectId}`;
+				const submissionCount = parseInt(localStorage.getItem(submissionKey) || '0');
+				if (submissionCount > 0) {
+					console.log(`Previous submissions found: ${submissionCount}`);
+				}
+			}, 100);
 
-				// Apply template variables to the reset code
-				originalCode = applyTemplateVariables(originalCode);
-
-				editor.setValue(originalCode);
-				localStorage.setItem(storageKey, originalCode);
-				document.getElementById('output').textContent = '';
-			}
-		})
-
-		// Submit button logic
-		submitButton.addEventListener('click', () => {
-			if (confirm('Are you sure you want to submit your code for evaluation?')) {
-				const code = editor.getValue()
-				localStorage.setItem(storageKey, code)
-
-				// Submit the code for evaluation and mark SCORM complete
-				submitCode(code)
-			}
-		})
-
-		editor.focus()
-	}, error => {
-		console.error('Monaco AMD load error:', error)
-		const outputDiv = document.getElementById('output')
-		if (outputDiv) outputDiv.textContent = 'Failed to load editor. Check network/CSP. Details in console.'
-	})
-}
+			editor.focus();
+			
+		}, error => {
+			console.error('Monaco AMD load error:', error);
+			monacoInitializing = false;
+			const outputDiv = document.getElementById('output');
+			if (outputDiv) outputDiv.textContent = 'Failed to load editor. Check network/CSP. Details in console.';
+			
+			// Retry after error
+			setTimeout(() => {
+				console.log('Retrying Monaco initialization after AMD error...');
+				initMonaco();
+			}, 3000);
+		});
+		
+	} catch (error) {
+		console.error('Monaco initialization error:', error);
+		monacoInitializing = false;
+		
+		// Show error to user
+		const outputDiv = document.getElementById('output');
+		if (outputDiv) outputDiv.textContent = 'Editor failed to load. Please refresh the page.';
+		
+		// Retry after a delay
+		setTimeout(() => {
+			console.log('Retrying Monaco initialization after error...');
+			initMonaco();
+		}, 5000);
+	}
+};
 
 // SCORM API Integration
 class ScormAPI {
@@ -1190,6 +1366,11 @@ function submitCode(code) {
 		const config = window.CODE_PRACTICE_CONFIG || {};
 		const timestamp = new Date().toISOString();
 		
+		// Get submission count for unique interaction IDs
+		const submissionKey = `submission_count_${config.objectId}`;
+		let submissionCount = parseInt(localStorage.getItem(submissionKey) || '0') + 1;
+		localStorage.setItem(submissionKey, submissionCount.toString());
+		
 		// Prepare submission data
 		const submissionData = {
 			objectId: config.objectId,
@@ -1211,8 +1392,8 @@ function submitCode(code) {
 		const setInteraction = createSetInteraction(scormAPI.api);
 
 		// Log the code submission as an interaction for instructor visibility
-		const submissionId = `${config.objectId}_submission`;
-		const submissionDescription = `Code Practice Submission - ${config.practiceTitle || 'Assignment'} (${config.language || 'javascript'})`;
+		const submissionId = `${config.objectId}_submission_${submissionCount}`;
+		const submissionDescription = `Code Practice Submission #${submissionCount} - ${config.practiceTitle || 'Assignment'} (${config.language || 'javascript'})`;
 		
 		// For very long code, we might need to split into multiple interactions
 		if (code.length <= 4000) {
@@ -1265,21 +1446,17 @@ function submitCode(code) {
 			'other',
 			metadata,
 			'correct',
-			`Submission Metadata - ${config.practiceTitle || 'Assignment'}`,
+			`Submission #${submissionCount} Metadata - ${config.practiceTitle || 'Assignment'}`,
 			true
 		);
 
-		// Set completion status and score using SCORM API directly
-		scormAPI.setValue('cmi.core.lesson_status', 'completed');
-		scormAPI.setValue('cmi.core.score.raw', '100');
+		// Update lesson location for tracking
 		scormAPI.setValue('cmi.core.lesson_location', `${config.objectId}_${timestamp}`);
-		
-		// For SCORM 2004 compatibility
-		scormAPI.setValue('cmi.completion_status', 'completed');
 
 		// Store summary in suspend_data as backup
 		const suspendData = JSON.stringify({
-			submittedAt: timestamp,
+			lastSubmittedAt: timestamp,
+			submissionCount: submissionCount,
 			codeLength: code.length,
 			language: config.language,
 			interactionCount: scormAPI.api.LMSGetValue('cmi.interactions._count')
@@ -1290,25 +1467,32 @@ function submitCode(code) {
 		const commitResult = scormAPI.commit();
 		
 		console.log('SCORM submission completed:', {
+			submissionNumber: submissionCount,
 			interactionCount: scormAPI.api.LMSGetValue('cmi.interactions._count'),
 			commitResult: commitResult,
 			codeLength: code.length,
 			chunks: code.length > 4000 ? Math.ceil(code.length / 3800) : 1
 		});
 
-		// Mark as complete
-		scormAPI.setComplete();
-
 		// Show success message
 		const interactionCount = scormAPI.api.LMSGetValue('cmi.interactions._count');
-		alert(`Code submitted successfully! 🎉\n\nYour solution has been logged to the LMS for instructor review.\nSubmission details:\n- Code length: ${code.length} characters\n- Language: ${config.language}\n- SCORM interactions created: ${interactionCount}\n- Timestamp: ${getScormTime()}`);
+		alert(`Code submitted successfully! 🎉\n\nSubmission #${submissionCount} has been logged to the LMS for instructor review.\nSubmission details:\n- Code length: ${code.length} characters\n- Language: ${config.language}\n- SCORM interactions created: ${interactionCount}\n- Timestamp: ${getScormTime()}\n\nYou can submit again if needed.`);
 
-		// Update submit button
+		// Briefly show success state, then reset button
 		const submitBtn = document.querySelector('#submit');
 		if (submitBtn) {
-			submitBtn.disabled = true;
-			submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg><span>Submitted</span>';
+			// Store the original default HTML (not the current HTML which might be from a previous submission)
+			const defaultHtml = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m438-240 226-226-58-58-169 169-84-84-57 57 142 142ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg><span>Submit</span>';
+			const originalBg = submitBtn.style.background || '';
+			
+			submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg><span>Submitted #' + submissionCount + '</span>';
 			submitBtn.style.background = '#28a745';
+			
+			// Reset button after 3 seconds to default state
+			setTimeout(() => {
+				submitBtn.innerHTML = defaultHtml;
+				submitBtn.style.background = originalBg;
+			}, 3000);
 		}
 
 		return true;

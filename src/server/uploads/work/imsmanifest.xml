@@ -5,15 +5,15 @@
     <schema>ADL SCORM</schema>
     <schemaversion>1.2</schemaversion>
     
-      <adlcp:location>C++ Fundamentals</adlcp:location>
+      <adlcp:location>C# Fundamentals</adlcp:location>
     
   </metadata>
 
   <organizations default="c-programming-c-fundamentals_org">
     <organization identifier="c-programming-c-fundamentals_org">
-      <title>C++ Fundamentals</title>
+      <title>C# Fundamentals</title>
       <item identifier="c-programming-c-fundamentals_item" identifierref="c-programming-c-fundamentals_resource">
-        <title>C++ Fundamentals</title>
+        <title>C# Fundamentals</title>
         <adlcp:maxtimeallowed>PT0H30M0S</adlcp:maxtimeallowed>
         <adlcp:timelimitaction>continue,no message</adlcp:timelimitaction>
         <adlcp:datafromlms></adlcp:datafromlms>
