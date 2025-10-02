@@ -10,17 +10,13 @@
     <h1>SCORM Object Generator</h1>
     
     <% if (typeof error !== 'undefined' && error) { %>
-      <div class="error-message" style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+      <div class="error-message">
         <strong>Error:</strong> <%= error %>
       </div>
     <% } %>
     
-    <form action="/code-practice" method="get">
-      <button type="submit" class="wizard-btn">Code Practice Object</button>
-    </form>
-    <form action="/lecture" method="get">
-      <button type="submit" class="wizard-btn">Lecture Object</button>
-    </form>
+    <a href="/code-practice" class="wizard-btn">Code Practice Object</a>
+    <a href="/lecture" class="wizard-btn">Lecture Object</a>
   </div>
 </body>
 </html>
