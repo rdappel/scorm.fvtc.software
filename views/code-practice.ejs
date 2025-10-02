@@ -480,6 +480,34 @@ function Test-IsEven($num) {
       return languageMap[language] || 'javascript';
     }
 
+    // Auto-generate Object ID function (global scope)
+    function generateObjectId() {
+      try {
+        const courseTitle = document.getElementById('courseTitle').value.trim();
+        const practiceTitle = document.getElementById('practiceTitle').value.trim();
+        let objectId = '';
+        
+        if (courseTitle || practiceTitle) {
+          // Create ID from course and practice titles
+          objectId = (courseTitle + '-' + practiceTitle)
+            .replace(/C#/g, 'csharp')
+            .replace(/C\+\+/g, 'cpp')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/-+/g, '-');
+        }
+        
+        const objectIdField = document.getElementById('objectId');
+        if (objectIdField) {
+          objectIdField.value = objectId;
+          console.log('Generated object ID:', objectId);
+        }
+      } catch (error) {
+        console.error('Error generating object ID:', error);
+      }
+    }
+
     function loadMonaco() {
       if (typeof require === 'function') {
         require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' } });
@@ -556,34 +584,6 @@ function Test-IsEven($num) {
             return;
           }
           
-          // Auto-generate Object ID function
-          function generateObjectId() {
-            try {
-              const courseTitle = document.getElementById('courseTitle').value.trim();
-              const practiceTitle = document.getElementById('practiceTitle').value.trim();
-              let objectId = '';
-              
-              if (courseTitle || practiceTitle) {
-                // Create ID from course and practice titles
-                objectId = (courseTitle + '-' + practiceTitle)
-                  .replace(/C#/g, 'csharp')
-                  .replace(/C\+\+/g, 'cpp')
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, '-')
-                  .replace(/^-+|-+$/g, '')
-                  .replace(/-+/g, '-');
-              }
-              
-              const objectIdField = document.getElementById('objectId');
-              if (objectIdField) {
-                objectIdField.value = objectId;
-                console.log('Generated object ID:', objectId);
-              }
-            } catch (error) {
-              console.error('Error generating object ID:', error);
-            }
-          }
-          
           // Attach event listeners with error handling
           try {
             const courseTitleField = document.getElementById('courseTitle');
@@ -625,6 +625,146 @@ function Test-IsEven($num) {
                 if (notice) notice.style.display = 'none';
                 
                 alert('All saved work, form fields, and code editors have been cleared!');
+              }
+            });
+          }
+          
+          // Export button handler
+          const exportBtn = document.getElementById('exportBtn');
+          if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+              try {
+                // Get current form data
+                const formData = {
+                  courseTitle: document.getElementById('courseTitle').value,
+                  practiceTitle: document.getElementById('practiceTitle').value,
+                  objectId: document.getElementById('objectId').value,
+                  language: document.getElementById('language').value,
+                  instructions: document.getElementById('instructions').value,
+                  configCode: window.monacoConfigEditor ? window.monacoConfigEditor.getValue() : '',
+                  startingCode: window.monacoStartingEditor ? window.monacoStartingEditor.getValue() : '',
+                  exportDate: new Date().toISOString(),
+                  version: '1.0'
+                };
+                
+                // Generate filename using same convention as SCORM generation
+                let filename = 'code-practice-export';
+                if (formData.courseTitle && formData.practiceTitle) {
+                  filename = (formData.courseTitle + '-' + formData.practiceTitle)
+                    .replace(/C#/g, 'csharp')
+                    .replace(/C\+\+/g, 'cpp')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    .replace(/-+/g, '-');
+                }
+                filename += '.json';
+                
+                // Create and download JSON file
+                const jsonString = JSON.stringify(formData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('Exported form data as:', filename);
+              } catch (error) {
+                console.error('Export failed:', error);
+                alert('Failed to export data. Please try again.');
+              }
+            });
+          }
+          
+          // Import button handler
+          const importBtn = document.getElementById('importBtn');
+          if (importBtn) {
+            importBtn.addEventListener('click', function() {
+              try {
+                // Create file input element
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json';
+                fileInput.style.display = 'none';
+                
+                fileInput.addEventListener('change', function(event) {
+                  const file = event.target.files[0];
+                  if (!file) return;
+                  
+                  const reader = new FileReader();
+                  reader.onload = function(e) {
+                    try {
+                      const importedData = JSON.parse(e.target.result);
+                      
+                      // Validate imported data structure
+                      const requiredFields = ['courseTitle', 'practiceTitle', 'language', 'instructions'];
+                      const hasValidFields = requiredFields.some(field => importedData[field]);
+                      
+                      if (!hasValidFields) {
+                        alert('Invalid JSON file. The file does not contain valid form data.');
+                        return;
+                      }
+                      
+                      // Confirm import
+                      const confirmMessage = `Import data from JSON file?\\n\\nThis will replace all current form fields and code editors.\\n\\nFile contains:\\n- Course: ${importedData.courseTitle || 'Not set'}\\n- Practice: ${importedData.practiceTitle || 'Not set'}\\n- Language: ${importedData.language || 'Not set'}`;
+                      
+                      if (confirm(confirmMessage)) {
+                        // Import form fields
+                        const formFields = ['courseTitle', 'practiceTitle', 'objectId', 'language', 'instructions'];
+                        formFields.forEach(fieldId => {
+                          const field = document.getElementById(fieldId);
+                          if (field && importedData[fieldId] !== undefined) {
+                            field.value = importedData[fieldId];
+                          }
+                        });
+                        
+                        // Import Monaco editor content
+                        if (window.monacoConfigEditor && importedData.configCode !== undefined) {
+                          window.monacoConfigEditor.setValue(importedData.configCode);
+                        }
+                        if (window.monacoStartingEditor && importedData.startingCode !== undefined) {
+                          window.monacoStartingEditor.setValue(importedData.startingCode);
+                        }
+                        
+                        // Update language syntax highlighting
+                        if (importedData.language) {
+                          const languageSelect = document.getElementById('language');
+                          if (languageSelect) {
+                            languageSelect.dispatchEvent(new Event('change'));
+                          }
+                        }
+                        
+                        // Generate object ID from imported data
+                        generateObjectId();
+                        
+                        // Save imported data to localStorage
+                        saveFormData();
+                        
+                        alert('Data imported successfully!');
+                        console.log('Imported data:', importedData);
+                      }
+                    } catch (parseError) {
+                      console.error('Failed to parse JSON:', parseError);
+                      alert('Invalid JSON file. Please select a valid JSON export file.');
+                    }
+                  };
+                  
+                  reader.readAsText(file);
+                });
+                
+                // Trigger file selection
+                document.body.appendChild(fileInput);
+                fileInput.click();
+                document.body.removeChild(fileInput);
+                
+              } catch (error) {
+                console.error('Import failed:', error);
+                alert('Failed to import data. Please try again.');
               }
             });
           }
@@ -797,16 +937,8 @@ function Test-IsEven($num) {
               );
             }
             
-            // Generate object ID
-            const courseTitle = example.courseTitle;
-            const practiceTitle = example.practiceTitle;
-            const objectId = (courseTitle + ' ' + practiceTitle)
-              .toLowerCase()
-              .replace(/[^a-z0-9\s-]/g, '')
-              .replace(/\s+/g, '-')
-              .replace(/-+/g, '-')
-              .replace(/^-|-$/g, '');
-            document.getElementById('objectId').value = objectId;
+            // Generate object ID using the global function
+            generateObjectId();
             
             // Visual feedback
             this.style.background = '#4caf50';
