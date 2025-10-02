@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>SCORM Object Generator</title>
-  <link rel="stylesheet" href="/public/css/wizard.css">
+	<meta charset="UTF-8">
+	<title>SCORM Object Generator</title>
+	<link rel="stylesheet" href="/public/css/wizard.css">
 </head>
+
 <body>
-  <div class="container menu">
-    <h1>SCORM Object Generator</h1>
-    
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="error-message">
-        <strong>Error:</strong> <%= error %>
-      </div>
-    <% } %>
-    
-    <a href="/code-practice" class="wizard-btn">Code Practice Object</a>
-    <a href="/lecture" class="wizard-btn">Lecture Object</a>
-  </div>
+	<div class="container menu">
+		<h1>SCORM Object Generator</h1>
+		<a href="/code-practice" class="wizard-btn">Code Practice Object</a>
+		<a href="/lecture" class="wizard-btn">Lecture Object</a>
+	</div>
 </body>
+
 </html>

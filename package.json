@@ -3,14 +3,9 @@
 	"version": "1.0.0",
 	"description": "Scorm Generator",
 	"type": "module",
-	"bin": {
-		"scorm-gen": "bin/scorm-gen.js"
-	},
 	"scripts": {
-		"build": "node src/index.js -c examples/course.simple.json -o dist",
 		"dev": "node src/server/app.js",
 		"lint": "eslint .",
-		"start": "node bin/scorm-gen.js",
 		"test": "node -e \"console.log('no tests yet')\"",
 		"audit": "npm audit --omit=dev --audit-level=high"
 	},
