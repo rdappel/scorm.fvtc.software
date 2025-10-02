@@ -32,6 +32,26 @@ const runnerEndpoint = 'https://emkc.org/api/v2/piston/execute';
 
 // Code merging function - replaces student code placeholders in configuration
 function mergeCodeWithConfig(configCode, studentCode) {
+	// Get current language to handle language-specific issues
+	const config = window.CODE_PRACTICE_CONFIG || {};
+	const currentLanguage = config.language || 'javascript';
+	
+	// For PHP, strip opening and closing PHP tags from student code to prevent nesting issues
+	let processedStudentCode = studentCode;
+	if (currentLanguage === 'php') {
+		// Remove opening PHP tags (<?php, <?, <?=)
+		processedStudentCode = processedStudentCode.replace(/^\s*<\?(?:php)?(?:\s|=)?/gm, '');
+		// Remove closing PHP tags (?>) 
+		processedStudentCode = processedStudentCode.replace(/\?>\s*$/gm, '');
+		// Clean up any remaining standalone closing tags
+		processedStudentCode = processedStudentCode.replace(/\?>\s*/g, '');
+		
+		// Only log in development mode
+		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+			console.log('Stripped PHP tags from student code to prevent nesting');
+		}
+	}
+
 	// Define possible placeholder patterns for different comment styles
 	const placeholderPatterns = [
 		// C-style comments (JavaScript, Java, C, C++, C#, PHP)
@@ -62,7 +82,7 @@ function mergeCodeWithConfig(configCode, studentCode) {
 	// Try each pattern until we find one that matches
 	for (const pattern of placeholderPatterns) {
 		if (pattern.test(configCode)) {
-			mergedCode = configCode.replace(pattern, studentCode.trim());
+			mergedCode = configCode.replace(pattern, processedStudentCode.trim());
 			placeholderFound = true;
 			// Only log pattern info in development, keep it hidden from students
 			if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -75,7 +95,7 @@ function mergeCodeWithConfig(configCode, studentCode) {
 	if (!placeholderFound) {
 		// If no placeholder found, prepend configuration code to student code
 		// This ensures instructor's setup code runs before student code
-		mergedCode = configCode.trim() + '\n\n' + studentCode.trim();
+		mergedCode = configCode.trim() + '\n\n' + processedStudentCode.trim();
 
 		// Only log in development mode
 		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
