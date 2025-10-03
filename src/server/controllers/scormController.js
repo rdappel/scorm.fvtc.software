@@ -5,7 +5,8 @@ import {
 	createScormSpec, 
 	processContentZip, 
 	generateScormPackage, 
-	cleanupTempDir 
+	cleanupTempDir,
+	cleanupWorkDir
 } from '../services/scormService.js'
 
 export const generateScorm = async (req, res) => {
@@ -54,5 +55,9 @@ export const generateScorm = async (req, res) => {
 	} finally {
 		// Cleanup temporary files
 		await cleanupTempDir(tempExtractDir)
+		
+		// Also cleanup work directory to prevent git conflicts
+		const workDir = path.join(__dirname, '../uploads/work')
+		await cleanupWorkDir(workDir)
 	}
 }

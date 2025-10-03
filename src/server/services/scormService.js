@@ -113,7 +113,7 @@ export const generateScormPackage = async (spec, contentPath = null) => {
 }
 
 /**
- * Clean up temporary directories
+ * Clean up temporary directories and work files
  * @param {string} tempDir - Path to temporary directory to clean up
  * @returns {Promise<void>}
  */
@@ -125,5 +125,20 @@ export const cleanupTempDir = async (tempDir) => {
 		} catch (error) {
 			logger.error('Failed to clean up temporary directory:', error)
 		}
+	}
+}
+
+/**
+ * Clean up work directory after SCORM generation
+ * @param {string} workDir - Path to work directory
+ * @returns {Promise<void>}
+ */
+export const cleanupWorkDir = async (workDir) => {
+	try {
+		const { emptyDir } = await import('fs-extra')
+		await emptyDir(workDir)
+		logger.info('Cleaned up work directory:', workDir)
+	} catch (error) {
+		logger.error('Failed to clean up work directory:', error)
 	}
 }
