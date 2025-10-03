@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest identifier="powershell-scripting-code-practice-1-4" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
-<manifest identifier="modern-javascript-code-practice-1-1" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+<manifest identifier="csharp-programming-code-practice-1-1" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
 
   <metadata>
     <schema>ADL SCORM</schema>
     <schemaversion>1.2</schemaversion>
     
-      <adlcp:location>Code Practice 1.4</adlcp:location>
+      <adlcp:location>Code Practice 1.1</adlcp:location>
     
   </metadata>
 
-  <organizations default="powershell-scripting-code-practice-1-4_org">
-    <organization identifier="powershell-scripting-code-practice-1-4_org">
-      <title>Code Practice 1.4</title>
-      <item identifier="powershell-scripting-code-practice-1-4_item" identifierref="powershell-scripting-code-practice-1-4_resource">
-        <title>Code Practice 1.4</title>
+  <organizations default="csharp-programming-code-practice-1-1_org">
+    <organization identifier="csharp-programming-code-practice-1-1_org">
+      <title>Code Practice 1.1</title>
+      <item identifier="csharp-programming-code-practice-1-1_item" identifierref="csharp-programming-code-practice-1-1_resource">
+        <title>Code Practice 1.1</title>
         <adlcp:maxtimeallowed>PT0H30M0S</adlcp:maxtimeallowed>
         <adlcp:timelimitaction>continue,no message</adlcp:timelimitaction>
         <adlcp:datafromlms></adlcp:datafromlms>
@@ -24,7 +23,7 @@
   </organizations>
 
   <resources>
-    <resource identifier="powershell-scripting-code-practice-1-4_resource" type="webcontent" adlcp:scormtype="sco" href="index.html">
+    <resource identifier="csharp-programming-code-practice-1-1_resource" type="webcontent" adlcp:scormtype="sco" href="index.html">
       <file href="index.html" />
       
         <file href="styles/reset.css" />

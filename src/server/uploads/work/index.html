@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>PowerShell Scripting - Code Practice 1.4</title>
+	<title>C# Programming - Code Practice 1.1</title>
 
 	<link rel="stylesheet" href="styles/reset.css">
 	<link rel="stylesheet" href="styles/site.css">
@@ -19,8 +19,8 @@
 
 <body>
 	<header>
-		<span class="course-title">PowerShell Scripting</span>
-		<span class="assignment-title">Code Practice 1.4</span>
+		<span class="course-title">C# Programming</span>
+		<span class="assignment-title">Code Practice 1.1</span>
 	</header>
 	<main>
 		<div class="panel" id="editor"></div>
@@ -67,16 +67,15 @@
 			</div>
 			<div id="instructions" style="display:block;">
 				<h1>Code Practice 1.1 Instructions</h1>
-<p>Finish the two PowerShell functions that have been started for you:</p>
-<p>123454</p>
+<p>Finish the two C# methods that have been started for you:</p>
 <ol>
-<li><p><code>Add-Numbers</code> - Should return the result of adding the two parameter values.</p>
+<li><p><code>AddNumbers</code> - Should return the result of adding the two parameter values.</p>
 </li>
-<li><p><code>Test-IsEven</code> - Should return <code>$true</code> if the parameter is an even number, otherwise <code>$false</code>.</p>
+<li><p><code>IsEven</code> - Should return <code>true</code> if the parameter is an even number, otherwise <code>false</code>.</p>
 </li>
 </ol>
 <blockquote>
-<p>You can use: <code>$num % 2 -eq 0</code> to determine if <code>$num</code> is even.</p>
+<p>You can use: <code>num % 2 == 0</code> to determine if <code>num</code> is even.</p>
 </blockquote>
 
 			</div>
@@ -86,13 +85,13 @@
 
 	<!-- Configuration data attributes for code practice -->
 	<div id="scorm-config" style="display: none;"
-		 data-language="powershell"
-		 data-starting-code="PCMNCldlbGNvbWUgPCN7e2ZpcnN0X25hbWV9fSM+IDwje3tsYXN0X25hbWV9fSM+IQ0KU3R1ZGVudCBJRDogPCN7e2lkfX0jPg0KQ291cnNlOiA8I3t7Y291cnNlX3RpdGxlfX0jPg0KQXNzaWdubWVudDogPCN7e3ByYWN0aWNlX3RpdGxlfX0jPg0KIz4NCg0KIyAxLiBDcmVhdGUgYSBmdW5jdGlvbiB0aGF0IGFkZHMgdHdvIG51bWJlcnMNCmZ1bmN0aW9uIEFkZC1OdW1iZXJzKCRhLCAkYikgew0KICAgICMgVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICByZXR1cm4gMA0KfQ0KDQojIDIuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgY2hlY2tzIGlmIGEgbnVtYmVyIGlzIGV2ZW4NCmZ1bmN0aW9uIFRlc3QtSXNFdmVuKCRudW0pIHsNCiAgICAjIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcmV0dXJuICRmYWxzZQ0KfQ=="
-		 data-config-code="PCMNCkNvbmZpZ3VyYXRpb24gY29kZSBydW5zIGJlZm9yZSBzdHVkZW50IGNvZGUNClRoaXMgY29kZSBpcyBoaWRkZW4gZnJvbSBzdHVkZW50cyBhbmQgc2V0cyB1cCB0aGUgZW52aXJvbm1lbnQNCldlbGNvbWUgPCN7e2ZpcnN0X25hbWV9fSM+IDwje3tsYXN0X25hbWV9fSM+IQ0KIz4NCg0KZnVuY3Rpb24gUnVuLVRlc3RzIHsNCiAgICBXcml0ZS1Ib3N0ICJSdW5uaW5nIHRlc3RzLi4uIg0KICAgIA0KICAgICMgVGVzdCBBZGQtTnVtYmVycyBmdW5jdGlvbg0KICAgICRzdW0gPSBBZGQtTnVtYmVycyAxNSAyNQ0KICAgIFdyaXRlLUhvc3QgIkFkZC1OdW1iZXJzIDE1IDI1ID0gJHN1bSIgJChpZigkc3VtIC1lcSA0MCkgeyJDb3JyZWN0ISJ9IGVsc2UgeyJJbmNvcnJlY3QifSkNCiAgICANCiAgICAjIFRlc3QgVGVzdC1Jc0V2ZW4gZnVuY3Rpb24gIA0KICAgICRldmVuVGVzdCA9IFRlc3QtSXNFdmVuIDgNCiAgICBXcml0ZS1Ib3N0ICJUZXN0LUlzRXZlbiA4ID0gJGV2ZW5UZXN0IiAkKGlmKCRldmVuVGVzdCAtZXEgJHRydWUpIHsiQ29ycmVjdCEifSBlbHNlIHsiSW5jb3JyZWN0In0pDQp9DQoNCiMgU3R1ZGVudCBjb2RlIHdpbGwgYmUgaW5zZXJ0ZWQgaGVyZToNCjwje3tzdHVkZW50X2NvZGV9fSM+DQoNCiMgUnVuIHRoZSB0ZXN0cw0KUnVuLVRlc3Rz"
-		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBQb3dlclNoZWxsIGZ1bmN0aW9ucyB0aGF0IGhhdmUgYmVlbiBzdGFydGVkIGZvciB5b3U6PC9wPg0KPHA+MTIzNDU0PC9wPg0KPG9sPg0KPGxpPjxwPjxjb2RlPkFkZC1OdW1iZXJzPC9jb2RlPiAtIFNob3VsZCByZXR1cm4gdGhlIHJlc3VsdCBvZiBhZGRpbmcgdGhlIHR3byBwYXJhbWV0ZXIgdmFsdWVzLjwvcD4NCjwvbGk+DQo8bGk+PHA+PGNvZGU+VGVzdC1Jc0V2ZW48L2NvZGU+IC0gU2hvdWxkIHJldHVybiA8Y29kZT4kdHJ1ZTwvY29kZT4gaWYgdGhlIHBhcmFtZXRlciBpcyBhbiBldmVuIG51bWJlciwgb3RoZXJ3aXNlIDxjb2RlPiRmYWxzZTwvY29kZT4uPC9wPg0KPC9saT4NCjwvb2w+DQo8YmxvY2txdW90ZT4NCjxwPllvdSBjYW4gdXNlOiA8Y29kZT4kbnVtICUgMiAtZXEgMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPiRudW08L2NvZGU+IGlzIGV2ZW4uPC9wPg0KPC9ibG9ja3F1b3RlPg0K"
-		 data-course-title="PowerShell Scripting"
-		 data-practice-title="Code Practice 1.4"
-		 data-object-id="powershell-scripting-code-practice-1-4">
+		 data-language="csharp"
+		 data-starting-code="Ly8gSGVsbG8gLyp7e2ZpcnN0X25hbWV9fSovISBXZWxjb21lIHRvIHlvdXIgQyMgYXNzaWdubWVudC4NCi8vIFN0dWRlbnQgSUQ6IC8qe3tpZH19Ki8gfCBDb3Vyc2U6IC8qe3tjb3Vyc2VfdGl0bGV9fSovDQovLyBBc3NpZ25tZW50OiAvKnt7cHJhY3RpY2VfdGl0bGV9fSovDQoNCi8vIDEuIENyZWF0ZSBhIG1ldGhvZCB0aGF0IGFkZHMgdHdvIG51bWJlcnMNCnB1YmxpYyBpbnQgQWRkTnVtYmVycyhpbnQgYSwgaW50IGIpDQp7DQoJLy8gVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCglyZXR1cm4gMDsNCn0NCg0KLy8gMi4gQ3JlYXRlIGEgbWV0aG9kIHRoYXQgY2hlY2tzIGlmIGEgbnVtYmVyIGlzIGV2ZW4NCnB1YmxpYyBib29sIElzRXZlbihpbnQgbnVtKQ0Kew0KCS8vIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQoJcmV0dXJuIGZhbHNlOw0KfQ=="
+		 data-config-code="Ly8gQ29uZmlndXJhdGlvbiBjb2RlIHJ1bnMgYmVmb3JlIHN0dWRlbnQgY29kZQ0KdXNpbmcgU3lzdGVtOw0KDQpwdWJsaWMgY2xhc3MgVGVzdFJ1bm5lciANCnsNCiAgICBwdWJsaWMgdm9pZCBSdW5UZXN0cygpIA0KICAgIHsNCiAgICAgICAgQ29uc29sZS5Xcml0ZUxpbmUoIlJ1bm5pbmcgdGVzdHMuLi4iKTsNCiAgICAgICAgDQogICAgICAgIC8vIFRlc3QgQWRkTnVtYmVycyBtZXRob2QNCiAgICAgICAgaW50IHN1bSA9IEFkZE51bWJlcnMoMTUsIDI1KTsNCiAgICAgICAgQ29uc29sZS5Xcml0ZUxpbmUoJCJBZGROdW1iZXJzKDE1LCAyNSkgPSB7c3VtfSB7KHN1bSA9PSA0MCA/ICJDb3JyZWN0ISIgOiAiSW5jb3JyZWN0Iil9Iik7DQogICAgICAgIA0KICAgICAgICAvLyBUZXN0IElzRXZlbiBtZXRob2QgIA0KICAgICAgICBib29sIGV2ZW5UZXN0ID0gSXNFdmVuKDgpOw0KICAgICAgICBDb25zb2xlLldyaXRlTGluZSgkIklzRXZlbig4KSA9IHtldmVuVGVzdH0geyhldmVuVGVzdCA9PSB0cnVlID8gIkNvcnJlY3QhIiA6ICJJbmNvcnJlY3QiKX0iKTsNCiAgICB9DQoNCgkvLyBTdHVkZW50IGNvZGUgd2lsbCBiZSBpbnNlcnRlZCBoZXJlOg0KCS8qe3tzdHVkZW50X2NvZGV9fSovDQp9DQoNCnB1YmxpYyBjbGFzcyBQcm9ncmFtDQp7ICAgIA0KICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBNYWluKCkNCiAgICB7DQoJCVRlc3RSdW5uZXIgcnVubmVyID0gbmV3IFRlc3RSdW5uZXIoKTsNCiAgICAgICAgcnVubmVyLlJ1blRlc3RzKCk7DQogICAgfQ0KfQ0K"
+		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBDIyBtZXRob2RzIHRoYXQgaGF2ZSBiZWVuIHN0YXJ0ZWQgZm9yIHlvdTo8L3A+DQo8b2w+DQo8bGk+PHA+PGNvZGU+QWRkTnVtYmVyczwvY29kZT4gLSBTaG91bGQgcmV0dXJuIHRoZSByZXN1bHQgb2YgYWRkaW5nIHRoZSB0d28gcGFyYW1ldGVyIHZhbHVlcy48L3A+DQo8L2xpPg0KPGxpPjxwPjxjb2RlPklzRXZlbjwvY29kZT4gLSBTaG91bGQgcmV0dXJuIDxjb2RlPnRydWU8L2NvZGU+IGlmIHRoZSBwYXJhbWV0ZXIgaXMgYW4gZXZlbiBudW1iZXIsIG90aGVyd2lzZSA8Y29kZT5mYWxzZTwvY29kZT4uPC9wPg0KPC9saT4NCjwvb2w+DQo8YmxvY2txdW90ZT4NCjxwPllvdSBjYW4gdXNlOiA8Y29kZT5udW0gJSAyID09IDA8L2NvZGU+IHRvIGRldGVybWluZSBpZiA8Y29kZT5udW08L2NvZGU+IGlzIGV2ZW4uPC9wPg0KPC9ibG9ja3F1b3RlPg0K"
+		 data-course-title="C# Programming"
+		 data-practice-title="Code Practice 1.1"
+		 data-object-id="csharp-programming-code-practice-1-1">
 	</div>
 	
 	<script>
