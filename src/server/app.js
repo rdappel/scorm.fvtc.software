@@ -31,6 +31,6 @@ app.listen(port, async () => {
 	console.log(`scorm-gen UI listening on http://localhost:${port}`)
 	
 	// Clean up old files on server start
-	await cleanupDistFiles(24, 20) // Keep max 20 files, delete files older than 24 hours
+	await cleanupDistFiles(12, 10) // Keep max 10 files, delete files older than 12 hours
 	await cleanupWorkDirectory() // Clean temporary build files
 })
