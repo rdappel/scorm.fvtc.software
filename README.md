@@ -146,21 +146,48 @@ The system supports intelligent template variable replacement with language-awar
 
 ```
 scorm.fvtc.software/
+├── package.json                    # Node.js dependencies and scripts
+├── README.md                       # Project documentation
+├── examples/
+│   └── content/
+│       └── index.html             # Example SCORM content
+├── public/                        # Static assets served to browser
+│   ├── css/
+│   │   └── wizard.css            # Main application styling
+│   └── js/
+│       ├── code-practice.js      # Main code practice functionality
+│       └── code-practice-examples.js # Language-specific examples
 ├── src/
-│   ├── generator.js          # Main SCORM generation logic
+│   ├── generator.js              # Core SCORM package generation
 │   ├── server/
-│   │   ├── app.js           # Express.js server
-│   │   ├── cleanup.js       # File cleanup utilities
-│   │   ├── routes.js        # API routes
-│   │   └── validate.js      # Input validation
-│   └── templates/           # SCORM templates and assets
-├── views/
-│   ├── index.ejs           # Main menu
-│   └── code-practice.ejs   # Code practice form
-├── public/
-│   └── css/
-│       └── wizard.css      # Application styling
-└── examples/               # Example configurations
+│   │   ├── app.js               # Express.js server configuration
+│   │   ├── cleanup.js           # Temporary file cleanup utilities
+│   │   ├── logger.js            # Application logging
+│   │   ├── routes.js            # API endpoint definitions
+│   │   ├── validate.js          # Input validation middleware
+│   │   ├── zipper.js            # ZIP file generation utilities
+│   │   ├── schema/
+│   │   │   └── course.schema.json # JSON schema for validation
+│   │   └── uploads/
+│   │       └── work/            # Temporary file processing area
+│   └── templates/
+│       ├── code-practice/       # Code practice SCORM template
+│       │   ├── index.html      # SCORM content wrapper
+│       │   ├── scripts/
+│       │   │   ├── editor.js   # Monaco editor configuration
+│       │   │   └── panel.js    # UI panel management
+│       │   └── styles/
+│       │       ├── panel.css   # Panel-specific styling
+│       │       ├── reset.css   # CSS reset
+│       │       └── site.css    # Template-specific styles
+│       └── scorm12/
+│           ├── api-adapter-1.2.js # SCORM API adapter
+│           ├── imsmanifest.ejs    # SCORM manifest template
+│           └── launch.ejs         # SCORM launch page template
+└── views/                        # EJS templates for web interface
+    ├── index.ejs                 # Main menu/landing page
+    ├── code-practice.ejs         # Code practice object creation form
+    └── success.ejs               # Success/download page
 ```
 
 ## API Endpoints
