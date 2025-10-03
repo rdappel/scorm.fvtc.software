@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url'
 import pkg from 'fs-extra'
 const { ensureDirSync, emptyDir, pathExists, copy, readFile, writeFile } = pkg
 import ejs from 'ejs'
-import { logger } from './server/logger.js'
-import { zipDir } from './server/zipper.js'
+import { logger } from './server/utils/logger.js'
+import { zipDir } from './server/utils/zipper.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

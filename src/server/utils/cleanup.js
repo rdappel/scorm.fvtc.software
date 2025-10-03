@@ -5,11 +5,6 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-/**
- * Clean up old SCORM packages from the dist directory
- * @param {number} maxAgeHours - Maximum age in hours before files are deleted
- * @param {number} maxFiles - Maximum number of files to keep (newest files)
- */
 export async function cleanupDistFiles(maxAgeHours = 24, maxFiles = 10) {
     const distDir = path.join(__dirname, '../../dist')
     
@@ -72,9 +67,7 @@ export async function cleanupDistFiles(maxAgeHours = 24, maxFiles = 10) {
     }
 }
 
-/**
- * Clean up uploads/work directory (temporary build files)
- */
+
 export async function cleanupWorkDirectory() {
     const workDir = path.join(__dirname, '../uploads/work')
     

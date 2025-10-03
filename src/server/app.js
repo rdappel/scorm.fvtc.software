@@ -3,7 +3,7 @@ import express from 'express'
 import path from 'node:path'
 import { fileURLToPath } from 'url'
 import routes from './routes.js'
-import { cleanupDistFiles, cleanupWorkDirectory } from './cleanup.js'
+import { cleanupDistFiles, cleanupWorkDirectory } from './utils/cleanup.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
