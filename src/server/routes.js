@@ -59,6 +59,7 @@ router.post('/generate', upload.single('contentZip'), async (req, res) => {
 				practiceTitle: req.body.practiceTitle,
 				language: req.body.language,
 				instructions: req.body.instructions,
+				instructionsMarkdown: req.body.instructionsMarkdown || '', // Store original markdown
 				startingCode: req.body.startingCode || '',
 				configCode: req.body.configCode || '',
 				metadata: {
@@ -71,6 +72,9 @@ router.post('/generate', upload.single('contentZip'), async (req, res) => {
 				courseTitle: spec.courseTitle,
 				practiceTitle: spec.practiceTitle,
 				language: spec.language,
+				instructionsLength: spec.instructions?.length || 0,
+				instructionsMarkdownLength: spec.instructionsMarkdown?.length || 0,
+				instructionsMarkdownPreview: spec.instructionsMarkdown?.substring(0, 100) || 'none',
 				startingCodeExists: !!spec.startingCode,
 				configCodeExists: !!spec.configCode
 			})

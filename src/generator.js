@@ -74,6 +74,26 @@ export const generate = async ({ spec, outdir, tmpDir, zip = false }) => {
 	// 4) sanity checks
 	await assertManifestAssets({ work, spec })
 
+	// 5) Create JSON export file for code practice objects
+	if (spec.objectType === 'code-practice') {
+		const exportData = {
+			courseTitle: spec.courseTitle || '',
+			practiceTitle: spec.practiceTitle || '',
+			objectId: spec.identifier || '',
+			language: spec.language || '',
+			instructions: spec.instructionsMarkdown || spec.instructions || '', // Use markdown if available, fallback to HTML
+			configCode: spec.configCode || '',
+			startingCode: spec.startingCode || '',
+			exportDate: new Date().toISOString(),
+			version: '1.0'
+		}
+		
+		const exportFilename = `${sanitize(spec.practiceTitle || 'code-practice')}-export.json`
+		const exportJson = JSON.stringify(exportData, null, 2)
+		await writeFile(join(work, exportFilename), exportJson)
+		logger.info(`Created JSON export file: ${exportFilename}`)
+	}
+
 	// 6) zip or leave folder
 	ensureDirSync(outdir)
 	const baseFileName = sanitize(spec.identifier || spec.title || 'scorm-package')

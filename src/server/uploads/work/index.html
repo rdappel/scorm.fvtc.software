@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Intro to Python Programming - Code Practice 1.1</title>
+	<title>PowerShell Scripting - Code Practice 1.4</title>
 
 	<link rel="stylesheet" href="styles/reset.css">
 	<link rel="stylesheet" href="styles/site.css">
@@ -19,8 +19,8 @@
 
 <body>
 	<header>
-		<span class="course-title">Intro to Python Programming</span>
-		<span class="assignment-title">Code Practice 1.1</span>
+		<span class="course-title">PowerShell Scripting</span>
+		<span class="assignment-title">Code Practice 1.4</span>
 	</header>
 	<main>
 		<div class="panel" id="editor"></div>
@@ -67,15 +67,16 @@
 			</div>
 			<div id="instructions" style="display:block;">
 				<h1>Code Practice 1.1 Instructions</h1>
-<p>Finish the two Python functions that have been started for you:</p>
+<p>Finish the two PowerShell functions that have been started for you:</p>
+<p>123454</p>
 <ol>
-<li><p><code>add_numbers</code> - Should return the result of adding the two parameter values.</p>
+<li><p><code>Add-Numbers</code> - Should return the result of adding the two parameter values.</p>
 </li>
-<li><p><code>is_even</code> - Should return <code>True</code> if the parameter is an even number, otherwise <code>False</code>.</p>
+<li><p><code>Test-IsEven</code> - Should return <code>$true</code> if the parameter is an even number, otherwise <code>$false</code>.</p>
 </li>
 </ol>
 <blockquote>
-<p>You can use: <code>num % 2 == 0</code> to determine if <code>num</code> is even.</p>
+<p>You can use: <code>$num % 2 -eq 0</code> to determine if <code>$num</code> is even.</p>
 </blockquote>
 
 			</div>
@@ -85,13 +86,13 @@
 
 	<!-- Configuration data attributes for code practice -->
 	<div id="scorm-config" style="display: none;"
-		 data-language="python"
-		 data-starting-code="IyBIZWxsbyAje3tmaXJzdF9uYW1lfX0hIFdlbGNvbWUgdG8geW91ciBQeXRob24gYXNzaWdubWVudC4NCiMgU3R1ZGVudCBJRDogI3t7aWR9fSB8IENvdXJzZTogI3t7Y291cnNlX3RpdGxlfX0NCiMgQXNzaWdubWVudDogI3t7cHJhY3RpY2VfdGl0bGV9fQ0KDQojIDEuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgYWRkcyB0d28gbnVtYmVycw0KZGVmIGFkZF9udW1iZXJzKGEsIGIpOg0KICAgICMgVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICBwYXNzDQoNCiMgMi4gQ3JlYXRlIGEgZnVuY3Rpb24gdGhhdCBjaGVja3MgaWYgYSBudW1iZXIgaXMgZXZlbg0KZGVmIGlzX2V2ZW4obnVtKToNCiAgICAjIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcGFzcw=="
-		 data-config-code="IyBDb25maWd1cmF0aW9uIGNvZGUgcnVucyBiZWZvcmUgc3R1ZGVudCBjb2RlDQojIFRoaXMgY29kZSBpcyBoaWRkZW4gZnJvbSBzdHVkZW50cyBhbmQgc2V0cyB1cCB0aGUgZW52aXJvbm1lbnQNCg0KZGVmIHJ1bl90ZXN0cygpOg0KICAgIHByaW50KCJSdW5uaW5nIHRlc3RzLi4uIikNCiAgICANCiAgICAjIFRlc3QgYWRkX251bWJlcnMgZnVuY3Rpb24NCiAgICByZXN1bHQgPSBhZGRfbnVtYmVycygxNSwgMjUpDQogICAgcHJpbnQoZiJhZGRfbnVtYmVycygxNSwgMjUpID0ge3Jlc3VsdH0iLCAiQ29ycmVjdCEiIGlmIHJlc3VsdCA9PSA0MCBlbHNlICJJbmNvcnJlY3QiKQ0KICAgIA0KICAgICMgVGVzdCBpc19ldmVuIGZ1bmN0aW9uDQogICAgZXZlbl90ZXN0ID0gaXNfZXZlbig4KQ0KICAgIHByaW50KGYiaXNfZXZlbig4KSA9IHtldmVuX3Rlc3R9IiwgIkNvcnJlY3QhIiBpZiBldmVuX3Rlc3QgPT0gVHJ1ZSBlbHNlICJJbmNvcnJlY3QiKQ0KDQogICAgIyBJZiBib3RoIGFyZSBjb3JyZWN0LCBjb25ncmF0dWxhdGUgdGhlIHN0dWRlbnQNCiAgICBpZiByZXN1bHQgPT0gNDAgYW5kIGV2ZW5fdGVzdDoNCiAgICAgICAgcHJpbnQoIkdyZWF0IGpvYiAje3tmaXJzdF9uYW1lfX0iKQ0KDQojIFN0dWRlbnQgY29kZSB3aWxsIGJlIGluc2VydGVkIGhlcmU6DQoje3tzdHVkZW50X2NvZGV9fQ0KDQojIFJ1biB0aGUgdGVzdHMNCnJ1bl90ZXN0cygp"
-		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBQeXRob24gZnVuY3Rpb25zIHRoYXQgaGF2ZSBiZWVuIHN0YXJ0ZWQgZm9yIHlvdTo8L3A+DQo8b2w+DQo8bGk+PHA+PGNvZGU+YWRkX251bWJlcnM8L2NvZGU+IC0gU2hvdWxkIHJldHVybiB0aGUgcmVzdWx0IG9mIGFkZGluZyB0aGUgdHdvIHBhcmFtZXRlciB2YWx1ZXMuPC9wPg0KPC9saT4NCjxsaT48cD48Y29kZT5pc19ldmVuPC9jb2RlPiAtIFNob3VsZCByZXR1cm4gPGNvZGU+VHJ1ZTwvY29kZT4gaWYgdGhlIHBhcmFtZXRlciBpcyBhbiBldmVuIG51bWJlciwgb3RoZXJ3aXNlIDxjb2RlPkZhbHNlPC9jb2RlPi48L3A+DQo8L2xpPg0KPC9vbD4NCjxibG9ja3F1b3RlPg0KPHA+WW91IGNhbiB1c2U6IDxjb2RlPm51bSAlIDIgPT0gMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPm51bTwvY29kZT4gaXMgZXZlbi48L3A+DQo8L2Jsb2NrcXVvdGU+DQo="
-		 data-course-title="Intro to Python Programming"
-		 data-practice-title="Code Practice 1.1"
-		 data-object-id="intro-to-python-programming-code-practice-1-1">
+		 data-language="powershell"
+		 data-starting-code="PCMNCldlbGNvbWUgPCN7e2ZpcnN0X25hbWV9fSM+IDwje3tsYXN0X25hbWV9fSM+IQ0KU3R1ZGVudCBJRDogPCN7e2lkfX0jPg0KQ291cnNlOiA8I3t7Y291cnNlX3RpdGxlfX0jPg0KQXNzaWdubWVudDogPCN7e3ByYWN0aWNlX3RpdGxlfX0jPg0KIz4NCg0KIyAxLiBDcmVhdGUgYSBmdW5jdGlvbiB0aGF0IGFkZHMgdHdvIG51bWJlcnMNCmZ1bmN0aW9uIEFkZC1OdW1iZXJzKCRhLCAkYikgew0KICAgICMgVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICByZXR1cm4gMA0KfQ0KDQojIDIuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgY2hlY2tzIGlmIGEgbnVtYmVyIGlzIGV2ZW4NCmZ1bmN0aW9uIFRlc3QtSXNFdmVuKCRudW0pIHsNCiAgICAjIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcmV0dXJuICRmYWxzZQ0KfQ=="
+		 data-config-code="PCMNCkNvbmZpZ3VyYXRpb24gY29kZSBydW5zIGJlZm9yZSBzdHVkZW50IGNvZGUNClRoaXMgY29kZSBpcyBoaWRkZW4gZnJvbSBzdHVkZW50cyBhbmQgc2V0cyB1cCB0aGUgZW52aXJvbm1lbnQNCldlbGNvbWUgPCN7e2ZpcnN0X25hbWV9fSM+IDwje3tsYXN0X25hbWV9fSM+IQ0KIz4NCg0KZnVuY3Rpb24gUnVuLVRlc3RzIHsNCiAgICBXcml0ZS1Ib3N0ICJSdW5uaW5nIHRlc3RzLi4uIg0KICAgIA0KICAgICMgVGVzdCBBZGQtTnVtYmVycyBmdW5jdGlvbg0KICAgICRzdW0gPSBBZGQtTnVtYmVycyAxNSAyNQ0KICAgIFdyaXRlLUhvc3QgIkFkZC1OdW1iZXJzIDE1IDI1ID0gJHN1bSIgJChpZigkc3VtIC1lcSA0MCkgeyJDb3JyZWN0ISJ9IGVsc2UgeyJJbmNvcnJlY3QifSkNCiAgICANCiAgICAjIFRlc3QgVGVzdC1Jc0V2ZW4gZnVuY3Rpb24gIA0KICAgICRldmVuVGVzdCA9IFRlc3QtSXNFdmVuIDgNCiAgICBXcml0ZS1Ib3N0ICJUZXN0LUlzRXZlbiA4ID0gJGV2ZW5UZXN0IiAkKGlmKCRldmVuVGVzdCAtZXEgJHRydWUpIHsiQ29ycmVjdCEifSBlbHNlIHsiSW5jb3JyZWN0In0pDQp9DQoNCiMgU3R1ZGVudCBjb2RlIHdpbGwgYmUgaW5zZXJ0ZWQgaGVyZToNCjwje3tzdHVkZW50X2NvZGV9fSM+DQoNCiMgUnVuIHRoZSB0ZXN0cw0KUnVuLVRlc3Rz"
+		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBQb3dlclNoZWxsIGZ1bmN0aW9ucyB0aGF0IGhhdmUgYmVlbiBzdGFydGVkIGZvciB5b3U6PC9wPg0KPHA+MTIzNDU0PC9wPg0KPG9sPg0KPGxpPjxwPjxjb2RlPkFkZC1OdW1iZXJzPC9jb2RlPiAtIFNob3VsZCByZXR1cm4gdGhlIHJlc3VsdCBvZiBhZGRpbmcgdGhlIHR3byBwYXJhbWV0ZXIgdmFsdWVzLjwvcD4NCjwvbGk+DQo8bGk+PHA+PGNvZGU+VGVzdC1Jc0V2ZW48L2NvZGU+IC0gU2hvdWxkIHJldHVybiA8Y29kZT4kdHJ1ZTwvY29kZT4gaWYgdGhlIHBhcmFtZXRlciBpcyBhbiBldmVuIG51bWJlciwgb3RoZXJ3aXNlIDxjb2RlPiRmYWxzZTwvY29kZT4uPC9wPg0KPC9saT4NCjwvb2w+DQo8YmxvY2txdW90ZT4NCjxwPllvdSBjYW4gdXNlOiA8Y29kZT4kbnVtICUgMiAtZXEgMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPiRudW08L2NvZGU+IGlzIGV2ZW4uPC9wPg0KPC9ibG9ja3F1b3RlPg0K"
+		 data-course-title="PowerShell Scripting"
+		 data-practice-title="Code Practice 1.4"
+		 data-object-id="powershell-scripting-code-practice-1-4">
 	</div>
 	
 	<script>

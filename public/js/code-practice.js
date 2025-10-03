@@ -546,13 +546,38 @@ function setupMonacoDependentHandlers(savedData) {
 
 							if (confirm(confirmMessage)) {
 								// Import form fields
-								const formFields = ['courseTitle', 'practiceTitle', 'objectId', 'language', 'instructions'];
+								const formFields = ['courseTitle', 'practiceTitle', 'objectId', 'language'];
 								formFields.forEach(fieldId => {
 									const field = document.getElementById(fieldId);
 									if (field && importedData[fieldId] !== undefined) {
 										field.value = importedData[fieldId];
 									}
 								});
+
+								// Handle instructions specially to support markdown
+								const instructionsField = document.getElementById('instructions');
+								const instructionsMarkdownField = document.getElementById('instructionsMarkdown');
+								
+								if (importedData.instructions !== undefined) {
+									// The imported instructions should be markdown
+									const markdownText = importedData.instructions;
+									
+									// Set the markdown in the visible field
+									if (instructionsField) {
+										instructionsField.value = markdownText;
+									}
+									
+									// Store markdown in hidden field
+									if (instructionsMarkdownField) {
+										instructionsMarkdownField.value = markdownText;
+									}
+									
+									// Update the preview if it exists
+									const previewContainer = document.getElementById('instructionsPreview');
+									if (previewContainer && typeof marked !== 'undefined' && markdownText.trim()) {
+										previewContainer.innerHTML = marked.parse(markdownText);
+									}
+								}
 
 								// Import Monaco editor content
 								if (window.monacoConfigEditor && importedData.configCode !== undefined) {
@@ -637,33 +662,21 @@ function setupMonacoDependentHandlers(savedData) {
 					startingCodeField.value = window.monacoStartingEditor.getValue();
 				}
 
-				// Convert markdown instructions to HTML for SCORM generation
+				// Handle instructions: store markdown in hidden field, convert to HTML for SCORM
 				if (instructionsField && instructionsMarkdownField) {
 					const markdownText = instructionsField.value || '';
 					
-					// Store the original markdown in hidden field for future editing
+					// Always store the original markdown in the hidden field
 					instructionsMarkdownField.value = markdownText;
 					
-					// Convert to HTML for the main instructions field (for server)
-					if (markdownText.trim()) {
-						// Use the marked library that's loaded globally
-						if (typeof marked !== 'undefined') {
-							const originalMarkdown = markdownText; // Preserve original
-							instructionsField.value = marked.parse(markdownText);
-							
-							// After form submission, restore markdown for continued editing
-							setTimeout(() => {
-								instructionsField.value = originalMarkdown;
-							}, 100);
-						} else {
-							// Fallback: just use the markdown text if marked isn't available
-							console.warn('Marked library not available, using raw markdown');
-							// Keep the markdown text as-is
-						}
+					// Convert to HTML for SCORM generation (instructions field)
+					if (markdownText.trim() && typeof marked !== 'undefined') {
+						instructionsField.value = marked.parse(markdownText);
 					}
+					// If marked isn't available, send as-is (markdown will work fine)
 				}
 
-				// Save form data (this will now save markdown properly)
+				// Save the current state (with markdown) to localStorage
 				saveFormData();
 			} catch (submitError) {
 				console.error('Form submission error:', submitError);
