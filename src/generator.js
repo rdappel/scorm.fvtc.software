@@ -50,6 +50,62 @@ export const generate = async ({ spec, outdir, tmpDir, zip = false }) => {
 		
 		// Copy SCORM API adapter (static file)
 		await copy(join(tdir, 'api-adapter-1.2.js'), join(work, 'api-adapter-1.2.js'))
+	} else if (spec.objectType === 'lesson') {
+		// For lesson objects, process templates in memory and generate settings.json
+		const lessonTemplate = join(__dirname, 'templates', 'lesson')
+		if (!(await pathExists(lessonTemplate))) {
+			throw new Error(`Lesson template not found: ${lessonTemplate}`)
+		}
+		
+		// Load and process index.html template in memory
+		const indexTemplateContent = await readFile(join(lessonTemplate, 'index.html'), 'utf8')
+		logger.info('Template loaded, processing with spec:', {
+			courseTitle: spec.courseTitle,
+			lessonTitle: spec.lessonTitle,
+			pageUrl: spec.pageUrl
+		})
+		
+		try {
+			const processedIndexHtml = ejs.render(indexTemplateContent, { spec, Buffer })
+			await writeFile(join(work, 'index.html'), processedIndexHtml)
+		} catch (ejsError) {
+			logger.error('EJS processing failed:', ejsError)
+			throw new Error(`Failed to process lesson template: ${ejsError.message}`)
+		}
+		
+		// Generate settings.json for lesson configuration
+		const settings = {
+			pageUrl: spec.pageUrl || '',
+			score: {
+				scoreMethod: spec.scoreMethod || 'pageProgress',
+				completionStatus: spec.completionStatus || 'pageProgress',
+				videoCompletionPercent: spec.videoCompletionPercent || 95,
+				maxScore: spec.maxScore || 100,
+				minScore: spec.minScore || 0,
+				passingScore: spec.passingScore || 70,
+				roundScore: spec.roundScore !== false
+			},
+			tracking: {
+				videoProgress: spec.trackVideoProgress !== false,
+				pageProgress: spec.trackPageProgress !== false,
+				hintOpenings: spec.trackHintOpenings !== false,
+				solutionOpenings: spec.trackSolutionOpenings !== false
+			},
+			misc: {
+				completionBar: spec.completionBar || 'pageProgress',
+				disableContextMenu: spec.disableContextMenu !== false
+			}
+		}
+		
+		const settingsJson = JSON.stringify(settings, null, 2)
+		await writeFile(join(work, 'settings.json'), settingsJson)
+		
+		// Copy lesson-specific scripts and styles
+		await copy(join(lessonTemplate, 'scripts'), join(work, 'scripts'))
+		await copy(join(lessonTemplate, 'styles'), join(work, 'styles'))
+		
+		// Copy SCORM API adapter (static file)
+		await copy(join(tdir, 'api-adapter-1.2.js'), join(work, 'api-adapter-1.2.js'))
 	} else {
 		// Standard content handling for other object types
 		const contentSrc = resolve(spec.contentPath || join(__dirname, '..', 'examples', 'content'))

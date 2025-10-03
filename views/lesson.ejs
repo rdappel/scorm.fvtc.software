@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Lesson SCORM Generator</title>
+	<link rel="stylesheet" href="/public/css/wizard.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>Lesson SCORM Generator</h1>
+		<form id="lesson-form" action="/api/v1/lesson" method="POST">
+			<div class="form-group">
+				<label for="pageUrl">Page URL:</label>
+				<input type="url" id="pageUrl" name="pageUrl" required 
+					   placeholder="https://fvtc.software/appel/version-control-essentials/pull-requests">
+				<small>URL of the fvtc.software page to convert to SCORM</small>
+			</div>
+
+			<div class="form-group">
+				<label for="title">Lesson Title:</label>
+				<input type="text" id="title" name="title" required 
+					   placeholder="Pull Requests">
+				<small>Title that will appear in the LMS</small>
+			</div>
+
+			<div class="form-group">
+				<label for="courseTitle">Course Name:</label>
+				<input type="text" id="courseTitle" name="courseTitle" required 
+					   placeholder="Version Control Essentials">
+				<small>Used for generating the filename</small>
+			</div>
+
+			<fieldset>
+				<legend>Scoring Options</legend>
+				
+				<div class="form-group">
+					<label for="scoreMethod">Score Method:</label>
+					<select id="scoreMethod" name="scoreMethod">
+						<option value="pageProgress">Page Progress</option>
+						<option value="videoProgress">Video Progress</option>
+						<option value="exerciseSubmissions">Exercise Submissions</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="completionStatus">Completion Status:</label>
+					<select id="completionStatus" name="completionStatus">
+						<option value="pageProgress">Page Progress</option>
+						<option value="videoPercentage">Video Percentage</option>
+						<option value="allVideosCompleted">All Videos Completed</option>
+						<option value="allExercisesSubmitted">All Exercises Submitted</option>
+						<option value="openedModule">Opened Module</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="passingScore">Passing Score:</label>
+					<input type="number" id="passingScore" name="passingScore" 
+						   min="0" max="100" value="70">
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Advanced Options</legend>
+				
+				<div class="form-group">
+					<label for="completionBar">Completion Bar:</label>
+					<select id="completionBar" name="completionBar">
+						<option value="pageProgress">Page Progress</option>
+						<option value="videoProgress">Video Progress</option>
+						<option value="exerciseSubmissions">Exercise Submissions</option>
+						<option value="none">None</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>
+						<input type="checkbox" name="disableContextMenu" checked>
+						Disable right-click menu
+					</label>
+				</div>
+			</fieldset>
+
+			<button type="submit">Generate Lesson SCORM</button>
+		</form>
+
+		<div class="back-link">
+			<a href="/">&larr; Back to Generator Menu</a>
+		</div>
+	</div>
+
+	<script>
+		document.getElementById('lesson-form').addEventListener('submit', async (e) => {
+			e.preventDefault()
+			
+			const submitButton = e.target.querySelector('button[type="submit"]')
+			const originalText = submitButton.textContent
+			submitButton.textContent = 'Generating...'
+			submitButton.disabled = true
+			
+			try {
+				const formData = new FormData(e.target)
+				const response = await fetch('/api/v1/lesson', {
+					method: 'POST',
+					body: formData
+				})
+				
+				if (response.ok) {
+					const blob = await response.blob()
+					const url = window.URL.createObjectURL(blob)
+					const a = document.createElement('a')
+					a.href = url
+					a.download = response.headers.get('Content-Disposition')?.split('filename=')[1] || 'lesson-scorm.zip'
+					document.body.appendChild(a)
+					a.click()
+					window.URL.revokeObjectURL(url)
+					a.remove()
+					
+					// Redirect to success page
+					setTimeout(() => {
+						window.location.href = '/success'
+					}, 1000)
+				} else {
+					const error = await response.text()
+					alert(`Error: ${error}`)
+				}
+			} catch (error) {
+				console.error('Error:', error)
+				alert('An error occurred while generating the SCORM package.')
+			} finally {
+				submitButton.textContent = originalText
+				submitButton.disabled = false
+			}
+		})
+	</script>
+</body>
+
+</html>
