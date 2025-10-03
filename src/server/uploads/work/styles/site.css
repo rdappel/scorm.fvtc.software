@@ -177,8 +177,89 @@ div#instructions {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	padding: 16px;
 	color: #c9d1d9;
-	font-size: 1.2rem;
 	line-height: 1.5;
-
 	user-select: none;
+}
+
+/* Restore proper heading sizes within instructions */
+div#instructions h1 {
+	font-size: 2em;
+	font-weight: bold;
+	margin: 0.67em 0;
+}
+
+div#instructions h2 {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin: 0.75em 0;
+}
+
+div#instructions h3 {
+	font-size: 1.17em;
+	font-weight: bold;
+	margin: 1em 0;
+}
+
+div#instructions h4 {
+	font-size: 1em;
+	font-weight: bold;
+	margin: 1.33em 0;
+}
+
+div#instructions h5 {
+	font-size: 0.83em;
+	font-weight: bold;
+	margin: 1.67em 0;
+}
+
+div#instructions h6 {
+	font-size: 0.67em;
+	font-weight: bold;
+	margin: 2.33em 0;
+}
+
+/* Restore proper paragraph spacing */
+div#instructions p {
+	margin: 1em 0;
+}
+
+/* Restore list styling */
+div#instructions ul {
+	list-style: disc;
+	margin: 1em 0;
+	padding-left: 2em;
+}
+
+div#instructions ol {
+	list-style: decimal;
+	margin: 1em 0;
+	padding-left: 2em;
+}
+
+div#instructions li {
+	margin: 0.5em 0;
+}
+
+/* Style other common markdown elements */
+div#instructions strong {
+	font-weight: bold;
+}
+
+div#instructions em {
+	font-style: italic;
+}
+
+div#instructions code {
+	background: #21262d;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-family: 'Courier New', Courier, monospace;
+}
+
+div#instructions blockquote {
+	border-left: 4px solid #30363d;
+	padding-left: 1em;
+	margin: 1em 0;
+	font-style: italic;
+	opacity: 0.8;
 }

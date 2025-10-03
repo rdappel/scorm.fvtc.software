@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>PHP Programming - PHP Fundamentals</title>
+	<title>C# Introduction to Programming - Code Practice 1.1</title>
 
 	<link rel="stylesheet" href="styles/reset.css">
 	<link rel="stylesheet" href="styles/site.css">
@@ -19,8 +19,8 @@
 
 <body>
 	<header>
-		<span class="course-title">PHP Programming</span>
-		<span class="assignment-title">PHP Fundamentals</span>
+		<span class="course-title">C# Introduction to Programming</span>
+		<span class="assignment-title">Code Practice 1.1</span>
 	</header>
 	<main>
 		<div class="panel" id="editor"></div>
@@ -66,8 +66,14 @@
 				</div>
 			</div>
 			<div id="instructions" style="display:block;">
-				<strong>PHP Fundamentals Instructions:</strong><br><br>
-				Complete the PHP functions using proper syntax.
+				<h1>Code Practice 1.1 Instructions</h1>
+<p>Practice setting object properties in C#.</p>
+<ol>
+<li>Set the <code>FirstName</code> property of the <code>character</code> object to <code>&quot;Sly.&quot;</code></li>
+<li>Set the <code>LastName</code> property of the <code>character</code> object to <code>&quot;Fox.&quot;</code></li>
+<li>Run the program. It should output the text: <strong>Sly Fox.</strong></li>
+</ol>
+
 			</div>
 			<pre id="output" style="display:none;"></pre>
 		</div>
@@ -75,13 +81,13 @@
 
 	<!-- Configuration data attributes for code practice -->
 	<div id="scorm-config" style="display: none;"
-		 data-language="php"
-		 data-starting-code="PD9waHANCi8vIEhlbGxvIC8qe3tmaXJzdF9uYW1lfX0qLyEgV2VsY29tZSB0byB5b3VyIFBIUCBhc3NpZ25tZW50Lg0KLy8gU3R1ZGVudCBJRDogLyp7e2lkfX0qLyB8IENvdXJzZTogLyp7e2NvdXJzZV90aXRsZX19Ki8NCi8vIEFzc2lnbm1lbnQ6IC8qe3twcmFjdGljZV90aXRsZX19Ki8NCg0KLy8gMS4gQ3JlYXRlIGEgZnVuY3Rpb24gdGhhdCBhZGRzIHR3byBudW1iZXJzDQpmdW5jdGlvbiBhZGROdW1iZXJzKCRhLCAkYikgew0KICAgIC8vIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcmV0dXJuIDA7DQp9DQoNCi8vIDIuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgY2hlY2tzIGlmIGEgbnVtYmVyIGlzIGV2ZW4NCmZ1bmN0aW9uIGlzRXZlbigkbnVtKSB7DQogICAgLy8gVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICByZXR1cm4gZmFsc2U7DQp9DQo/Pg=="
-		 data-config-code="PD9waHANCi8vIENvbmZpZ3VyYXRpb24gY29kZSBydW5zIGJlZm9yZSBzdHVkZW50IGNvZGUNCg0KZnVuY3Rpb24gcnVuVGVzdHMoKSB7DQogICAgZWNobyAiUnVubmluZyB0ZXN0cy4uLlxuIjsNCiAgICANCiAgICAvLyBUZXN0IGFkZE51bWJlcnMgZnVuY3Rpb24NCiAgICAkc3VtID0gYWRkTnVtYmVycygxNSwgMjUpOw0KICAgIGVjaG8gImFkZE51bWJlcnMoMTUsIDI1KSA9ICRzdW0gIiAuICgkc3VtID09IDQwID8gIkNvcnJlY3QhIiA6ICJJbmNvcnJlY3QiKSAuICJcbiI7DQogICAgDQogICAgLy8gVGVzdCBpc0V2ZW4gZnVuY3Rpb24NCiAgICAkZXZlblRlc3QgPSBpc0V2ZW4oOCk7DQogICAgZWNobyAiaXNFdmVuKDgpID0gIiAuICgkZXZlblRlc3QgPyAidHJ1ZSIgOiAiZmFsc2UiKSAuICIgIiAuICgkZXZlblRlc3QgPT09IHRydWUgPyAiQ29ycmVjdCEiIDogIkluY29ycmVjdCIpIC4gIlxuIjsNCn0NCg0KLy8gU3R1ZGVudCBjb2RlIHdpbGwgYmUgaW5zZXJ0ZWQgaGVyZToNCi8qe3tzdHVkZW50X2NvZGV9fSovDQoNCi8vIFJ1biB0ZXN0cw0KcnVuVGVzdHMoKTsNCj8+"
-		 data-instructions="Q29tcGxldGUgdGhlIFBIUCBmdW5jdGlvbnMgdXNpbmcgcHJvcGVyIHN5bnRheC4="
-		 data-course-title="PHP Programming"
-		 data-practice-title="PHP Fundamentals"
-		 data-object-id="php-programming-php-fundamentals">
+		 data-language="csharp"
+		 data-starting-code="DQovLyAxLiBTZXQgdGhlIGNoYXJhY3RlcidzIGZpcnN0IG5hbWUgdG8gIlNseSI6DQoNCi8vIDIuIFNldCB0aGUgY2hhcmFjdGVyJ3MgbGFzdCBuYW1lIHRvICJGb3giOw0KDQoNCg=="
+		 data-config-code="bmFtZXNwYWNlIENvZGVQcmFjdGljZTFfMQ0Kew0KICAgIGNsYXNzIENoYXJhY3Rlcg0KICAgIHsNCiAgICAgICAgcHVibGljIHN0cmluZyBGaXJzdE5hbWUgeyBnZXQ7IHNldDsgfSA9ICIiOw0KICAgICAgICBwdWJsaWMgc3RyaW5nIExhc3ROYW1lIHsgZ2V0OyBzZXQ7IH0gPSAiIjsNCg0KICAgICAgICBwdWJsaWMgdm9pZCBQcmludCgpDQogICAgICAgIHsNCiAgICAgICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgkIntGaXJzdE5hbWV9IHtMYXN0TmFtZX0iKTsNCiAgICAgICAgfQ0KICAgIH0NCg0KICAgIHB1YmxpYyBzdGF0aWMgY2xhc3MgUHJvZ3JhbQ0KICAgIHsNCiAgICAgICAgcHVibGljIHN0YXRpYyB2b2lkIE1haW4oKQ0KICAgICAgICB7DQogICAgICAgICAgICBDaGFyYWN0ZXIgY2hhcmFjdGVyID0gbmV3IENoYXJhY3RlcigpOw0KICAgICAgICAgICAgLyp7e3N0dWRlbnRfY29kZX19Ki8NCiAgICAgICAgICAgIGNoYXJhY3Rlci5QcmludCgpOw0KICAgICAgICB9DQogICAgfQ0KfQ0K"
+		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5QcmFjdGljZSBzZXR0aW5nIG9iamVjdCBwcm9wZXJ0aWVzIGluIEMjLjwvcD4NCjxvbD4NCjxsaT5TZXQgdGhlIDxjb2RlPkZpcnN0TmFtZTwvY29kZT4gcHJvcGVydHkgb2YgdGhlIDxjb2RlPmNoYXJhY3RlcjwvY29kZT4gb2JqZWN0IHRvIDxjb2RlPiZxdW90O1NseS4mcXVvdDs8L2NvZGU+PC9saT4NCjxsaT5TZXQgdGhlIDxjb2RlPkxhc3ROYW1lPC9jb2RlPiBwcm9wZXJ0eSBvZiB0aGUgPGNvZGU+Y2hhcmFjdGVyPC9jb2RlPiBvYmplY3QgdG8gPGNvZGU+JnF1b3Q7Rm94LiZxdW90OzwvY29kZT48L2xpPg0KPGxpPlJ1biB0aGUgcHJvZ3JhbS4gSXQgc2hvdWxkIG91dHB1dCB0aGUgdGV4dDogPHN0cm9uZz5TbHkgRm94Ljwvc3Ryb25nPjwvbGk+DQo8L29sPg0K"
+		 data-course-title="C# Introduction to Programming"
+		 data-practice-title="Code Practice 1.1"
+		 data-object-id="csharp-introduction-to-programming-code-practice-1-1">
 	</div>
 	
 	<script>

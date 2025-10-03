@@ -66,8 +66,7 @@
 				</div>
 			</div>
 			<div id="instructions" style="display:block;">
-				<strong><%= spec.practiceTitle || 'Code Practice' %> Instructions:</strong><br><br>
-				<%= spec.instructions || 'Complete the coding exercise as described.' %>
+				<%- spec.instructions || 'Complete the coding exercise as described.' %>
 			</div>
 			<pre id="output" style="display:none;"></pre>
 		</div>
