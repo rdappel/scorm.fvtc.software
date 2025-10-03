@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Intro to Python Programming - Code Practice 1.1</title>
+	<title>Modern JavaScript - Code Practice 1.1</title>
 
 	<link rel="stylesheet" href="styles/reset.css">
 	<link rel="stylesheet" href="styles/site.css">
@@ -19,7 +19,7 @@
 
 <body>
 	<header>
-		<span class="course-title">Intro to Python Programming</span>
+		<span class="course-title">Modern JavaScript</span>
 		<span class="assignment-title">Code Practice 1.1</span>
 	</header>
 	<main>
@@ -67,15 +67,15 @@
 			</div>
 			<div id="instructions" style="display:block;">
 				<h1>Code Practice 1.1 Instructions</h1>
-<p>Finish the two Python functions that have been started for you:</p>
+<p>Finish the two JavaScript functions that have been started for you:</p>
 <ol>
-<li><p><code>add_numbers</code> - Should return the result of adding the two parameter values.</p>
+<li><p><code>addNumbers</code> - Should return the result of adding the two parameter values.</p>
 </li>
-<li><p><code>is_even</code> - Should return <code>True</code> if the parameter is an even number, otherwise <code>False</code>.</p>
+<li><p><code>isEven</code> - Should return <code>true</code> if the parameter is an even number, otherwise <code>false</code>.</p>
 </li>
 </ol>
 <blockquote>
-<p>You can use: <code>num % 2 == 0</code> to determine if <code>num</code> is even.</p>
+<p>You can use: <code>num % 2 === 0</code> to determine if <code>num</code> is even.</p>
 </blockquote>
 
 			</div>
@@ -85,13 +85,13 @@
 
 	<!-- Configuration data attributes for code practice -->
 	<div id="scorm-config" style="display: none;"
-		 data-language="python"
-		 data-starting-code="IyBIZWxsbyAje3tmaXJzdF9uYW1lfX0hIFdlbGNvbWUgdG8geW91ciBQeXRob24gYXNzaWdubWVudC4NCiMgU3R1ZGVudCBJRDogI3t7aWR9fSB8IENvdXJzZTogI3t7Y291cnNlX3RpdGxlfX0NCiMgQXNzaWdubWVudDogI3t7cHJhY3RpY2VfdGl0bGV9fQ0KDQojIDEuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgYWRkcyB0d28gbnVtYmVycw0KZGVmIGFkZF9udW1iZXJzKGEsIGIpOg0KICAgICMgVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICBwYXNzDQoNCiMgMi4gQ3JlYXRlIGEgZnVuY3Rpb24gdGhhdCBjaGVja3MgaWYgYSBudW1iZXIgaXMgZXZlbg0KZGVmIGlzX2V2ZW4obnVtKToNCiAgICAjIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcGFzcw=="
-		 data-config-code="IyBDb25maWd1cmF0aW9uIGNvZGUgcnVucyBiZWZvcmUgc3R1ZGVudCBjb2RlDQojIFRoaXMgY29kZSBpcyBoaWRkZW4gZnJvbSBzdHVkZW50cyBhbmQgc2V0cyB1cCB0aGUgZW52aXJvbm1lbnQNCg0KZGVmIHJ1bl90ZXN0cygpOg0KICAgIHByaW50KCJSdW5uaW5nIHRlc3RzLi4uIikNCiAgICANCiAgICAjIFRlc3QgYWRkX251bWJlcnMgZnVuY3Rpb24NCiAgICByZXN1bHQgPSBhZGRfbnVtYmVycygxNSwgMjUpDQogICAgcHJpbnQoZiJhZGRfbnVtYmVycygxNSwgMjUpID0ge3Jlc3VsdH0iLCAiQ29ycmVjdCEiIGlmIHJlc3VsdCA9PSA0MCBlbHNlICJJbmNvcnJlY3QiKQ0KICAgIA0KICAgICMgVGVzdCBpc19ldmVuIGZ1bmN0aW9uDQogICAgZXZlbl90ZXN0ID0gaXNfZXZlbig4KQ0KICAgIHByaW50KGYiaXNfZXZlbig4KSA9IHtldmVuX3Rlc3R9IiwgIkNvcnJlY3QhIiBpZiBldmVuX3Rlc3QgPT0gVHJ1ZSBlbHNlICJJbmNvcnJlY3QiKQ0KDQogICAgIyBJZiBib3RoIGFyZSBjb3JyZWN0LCBjb25ncmF0dWxhdGUgdGhlIHN0dWRlbnQNCiAgICBpZiByZXN1bHQgPT0gNDAgYW5kIGV2ZW5fdGVzdDoNCiAgICAgICAgcHJpbnQoIkdyZWF0IGpvYiAje3tmaXJzdF9uYW1lfX0iKQ0KDQojIFN0dWRlbnQgY29kZSB3aWxsIGJlIGluc2VydGVkIGhlcmU6DQoje3tzdHVkZW50X2NvZGV9fQ0KDQojIFJ1biB0aGUgdGVzdHMNCnJ1bl90ZXN0cygp"
-		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBQeXRob24gZnVuY3Rpb25zIHRoYXQgaGF2ZSBiZWVuIHN0YXJ0ZWQgZm9yIHlvdTo8L3A+DQo8b2w+DQo8bGk+PHA+PGNvZGU+YWRkX251bWJlcnM8L2NvZGU+IC0gU2hvdWxkIHJldHVybiB0aGUgcmVzdWx0IG9mIGFkZGluZyB0aGUgdHdvIHBhcmFtZXRlciB2YWx1ZXMuPC9wPg0KPC9saT4NCjxsaT48cD48Y29kZT5pc19ldmVuPC9jb2RlPiAtIFNob3VsZCByZXR1cm4gPGNvZGU+VHJ1ZTwvY29kZT4gaWYgdGhlIHBhcmFtZXRlciBpcyBhbiBldmVuIG51bWJlciwgb3RoZXJ3aXNlIDxjb2RlPkZhbHNlPC9jb2RlPi48L3A+DQo8L2xpPg0KPC9vbD4NCjxibG9ja3F1b3RlPg0KPHA+WW91IGNhbiB1c2U6IDxjb2RlPm51bSAlIDIgPT0gMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPm51bTwvY29kZT4gaXMgZXZlbi48L3A+DQo8L2Jsb2NrcXVvdGU+DQo="
-		 data-course-title="Intro to Python Programming"
+		 data-language="javascript"
+		 data-starting-code="Ly8gSGVsbG8gLyp7e2ZpcnN0X25hbWV9fSovISBXZWxjb21lIHRvIHlvdXIgY29kaW5nIGFzc2lnbm1lbnQuDQovLyBTdHVkZW50IElEOiAvKnt7aWR9fSovIHwgQ291cnNlOiAvKnt7Y291cnNlX3RpdGxlfX0qLw0KLy8gQXNzaWdubWVudDogLyp7e3ByYWN0aWNlX3RpdGxlfX0qLw0KDQovLyAxLiBDcmVhdGUgYSBmdW5jdGlvbiB0aGF0IGFkZHMgdHdvIG51bWJlcnMNCmZ1bmN0aW9uIGFkZE51bWJlcnMoYSwgYikgew0KICAgIC8vIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQoNCn0NCg0KLy8gMi4gQ3JlYXRlIGEgZnVuY3Rpb24gdGhhdCBjaGVja3MgaWYgYSBudW1iZXIgaXMgZXZlbiAoSGludDogbnVtYmVyICUgMiA9PT0gMCkNCmZ1bmN0aW9uIGlzRXZlbihudW0pIHsNCiAgICAvLyBUT0RPOiBXcml0ZSB5b3VyIGNvZGUgaGVyZQ0KDQp9"
+		 data-config-code="Ly8gQ29uZmlndXJhdGlvbiBjb2RlIHJ1bnMgYmVmb3JlIHN0dWRlbnQgY29kZQ0KLy8gVGhpcyBjb2RlIGlzIGhpZGRlbiBmcm9tIHN0dWRlbnRzIGFuZCBzZXRzIHVwIHRoZSBlbnZpcm9ubWVudA0KY29uc3QgcnVuVGVzdHMgPSAoKSA9PiB7DQoJY29uc29sZS5sb2coIlJ1bm5pbmcgdGVzdHMuLi4iKQ0KDQoJLy8gY2hlY2sgYWRkTnVtYmVyczoNCgljb25zdCBzdW0gPSBhZGROdW1iZXJzKDE1LCAyNSkNCgljb25zb2xlLmxvZygiYWRkTnVtYmVycygxNSwgMjUpID0gIiArIHN1bSwgc3VtID09PSA0MCA/ICJDb3JyZWN0ISIgOiAiSW5jb3JyZWN0IikNCg0KCS8vIGNoZWNrIGlzRXZlbjoNCgljb25zdCBldmVuVGVzdCA9IGlzRXZlbig4KQ0KCWNvbnNvbGUubG9nKCJpc0V2ZW4oOCkgPSAiICsgZXZlblRlc3QsIGV2ZW5UZXN0ID09PSB0cnVlID8gIkNvcnJlY3QhIiA6ICJJbmNvcnJlY3QiKQ0KDQogICAgaWYgKHN1bSA9PT0gNDAgJiYgZXZlblRlc3QpIHsNCiAgICAgICAgY29uc29sZS5sb2coYEdyZWF0IGpvYiAvKnt7Zmlyc3RfbmFtZX19Ki8hYCkNCiAgICB9DQp9DQoNCmNvbnN0IGF0dGVtcHRDb3VudCA9IHBhcnNlSW50KCIvKnt7YXR0ZW1wdF9jb3VudH19Ki8iKQ0KY29uc3QgcmFuZG9tV29yZCA9ICIvKnt7cmFuZG9tX3dvcmR9fSovIg0KY29uc3QgdXVpZCA9ICIvKnt7dXVpZH19Ki8iDQoNCmNvbnN0IGdldFN0dWZmID0gKCkgPT4gKHsgYXR0ZW1wdENvdW50LCByYW5kb21Xb3JkLCB1dWlkIH0pDQoNCi8vIFRoZSBzdHVkZW50IGNvZGUgd2lsbCBiZSBpbnNlcnRlZCBoZXJlOg0KLyp7e3N0dWRlbnRfY29kZX19Ki8NCg0KLy8gVGVzdGluZyBzdHVkZW50IGZ1bmN0aW9ucw0KcnVuVGVzdHMoKQ=="
+		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBKYXZhU2NyaXB0IGZ1bmN0aW9ucyB0aGF0IGhhdmUgYmVlbiBzdGFydGVkIGZvciB5b3U6PC9wPg0KPG9sPg0KPGxpPjxwPjxjb2RlPmFkZE51bWJlcnM8L2NvZGU+IC0gU2hvdWxkIHJldHVybiB0aGUgcmVzdWx0IG9mIGFkZGluZyB0aGUgdHdvIHBhcmFtZXRlciB2YWx1ZXMuPC9wPg0KPC9saT4NCjxsaT48cD48Y29kZT5pc0V2ZW48L2NvZGU+IC0gU2hvdWxkIHJldHVybiA8Y29kZT50cnVlPC9jb2RlPiBpZiB0aGUgcGFyYW1ldGVyIGlzIGFuIGV2ZW4gbnVtYmVyLCBvdGhlcndpc2UgPGNvZGU+ZmFsc2U8L2NvZGU+LjwvcD4NCjwvbGk+DQo8L29sPg0KPGJsb2NrcXVvdGU+DQo8cD5Zb3UgY2FuIHVzZTogPGNvZGU+bnVtICUgMiA9PT0gMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPm51bTwvY29kZT4gaXMgZXZlbi48L3A+DQo8L2Jsb2NrcXVvdGU+DQo="
+		 data-course-title="Modern JavaScript"
 		 data-practice-title="Code Practice 1.1"
-		 data-object-id="intro-to-python-programming-code-practice-1-1">
+		 data-object-id="modern-javascript-code-practice-1-1">
 	</div>
 	
 	<script>
