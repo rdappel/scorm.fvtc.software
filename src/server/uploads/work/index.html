@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>C# Introduction to Programming - Code Practice 1.1</title>
+	<title>Intro to Python Programming - Code Practice 1.1</title>
 
 	<link rel="stylesheet" href="styles/reset.css">
 	<link rel="stylesheet" href="styles/site.css">
@@ -19,7 +19,7 @@
 
 <body>
 	<header>
-		<span class="course-title">C# Introduction to Programming</span>
+		<span class="course-title">Intro to Python Programming</span>
 		<span class="assignment-title">Code Practice 1.1</span>
 	</header>
 	<main>
@@ -67,12 +67,16 @@
 			</div>
 			<div id="instructions" style="display:block;">
 				<h1>Code Practice 1.1 Instructions</h1>
-<p>Practice setting object properties in C#.</p>
+<p>Finish the two Python functions that have been started for you:</p>
 <ol>
-<li>Set the <code>FirstName</code> property of the <code>character</code> object to <code>&quot;Sly.&quot;</code></li>
-<li>Set the <code>LastName</code> property of the <code>character</code> object to <code>&quot;Fox.&quot;</code></li>
-<li>Run the program. It should output the text: <strong>Sly Fox.</strong></li>
+<li><p><code>add_numbers</code> - Should return the result of adding the two parameter values.</p>
+</li>
+<li><p><code>is_even</code> - Should return <code>True</code> if the parameter is an even number, otherwise <code>False</code>.</p>
+</li>
 </ol>
+<blockquote>
+<p>You can use: <code>num % 2 == 0</code> to determine if <code>num</code> is even.</p>
+</blockquote>
 
 			</div>
 			<pre id="output" style="display:none;"></pre>
@@ -81,13 +85,13 @@
 
 	<!-- Configuration data attributes for code practice -->
 	<div id="scorm-config" style="display: none;"
-		 data-language="csharp"
-		 data-starting-code="DQovLyAxLiBTZXQgdGhlIGNoYXJhY3RlcidzIGZpcnN0IG5hbWUgdG8gIlNseSI6DQoNCi8vIDIuIFNldCB0aGUgY2hhcmFjdGVyJ3MgbGFzdCBuYW1lIHRvICJGb3giOw0KDQoNCg=="
-		 data-config-code="bmFtZXNwYWNlIENvZGVQcmFjdGljZTFfMQ0Kew0KICAgIGNsYXNzIENoYXJhY3Rlcg0KICAgIHsNCiAgICAgICAgcHVibGljIHN0cmluZyBGaXJzdE5hbWUgeyBnZXQ7IHNldDsgfSA9ICIiOw0KICAgICAgICBwdWJsaWMgc3RyaW5nIExhc3ROYW1lIHsgZ2V0OyBzZXQ7IH0gPSAiIjsNCg0KICAgICAgICBwdWJsaWMgdm9pZCBQcmludCgpDQogICAgICAgIHsNCiAgICAgICAgICAgIFN5c3RlbS5Db25zb2xlLldyaXRlTGluZSgkIntGaXJzdE5hbWV9IHtMYXN0TmFtZX0iKTsNCiAgICAgICAgfQ0KICAgIH0NCg0KICAgIHB1YmxpYyBzdGF0aWMgY2xhc3MgUHJvZ3JhbQ0KICAgIHsNCiAgICAgICAgcHVibGljIHN0YXRpYyB2b2lkIE1haW4oKQ0KICAgICAgICB7DQogICAgICAgICAgICBDaGFyYWN0ZXIgY2hhcmFjdGVyID0gbmV3IENoYXJhY3RlcigpOw0KICAgICAgICAgICAgLyp7e3N0dWRlbnRfY29kZX19Ki8NCiAgICAgICAgICAgIGNoYXJhY3Rlci5QcmludCgpOw0KICAgICAgICB9DQogICAgfQ0KfQ0K"
-		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5QcmFjdGljZSBzZXR0aW5nIG9iamVjdCBwcm9wZXJ0aWVzIGluIEMjLjwvcD4NCjxvbD4NCjxsaT5TZXQgdGhlIDxjb2RlPkZpcnN0TmFtZTwvY29kZT4gcHJvcGVydHkgb2YgdGhlIDxjb2RlPmNoYXJhY3RlcjwvY29kZT4gb2JqZWN0IHRvIDxjb2RlPiZxdW90O1NseS4mcXVvdDs8L2NvZGU+PC9saT4NCjxsaT5TZXQgdGhlIDxjb2RlPkxhc3ROYW1lPC9jb2RlPiBwcm9wZXJ0eSBvZiB0aGUgPGNvZGU+Y2hhcmFjdGVyPC9jb2RlPiBvYmplY3QgdG8gPGNvZGU+JnF1b3Q7Rm94LiZxdW90OzwvY29kZT48L2xpPg0KPGxpPlJ1biB0aGUgcHJvZ3JhbS4gSXQgc2hvdWxkIG91dHB1dCB0aGUgdGV4dDogPHN0cm9uZz5TbHkgRm94Ljwvc3Ryb25nPjwvbGk+DQo8L29sPg0K"
-		 data-course-title="C# Introduction to Programming"
+		 data-language="python"
+		 data-starting-code="IyBIZWxsbyAje3tmaXJzdF9uYW1lfX0hIFdlbGNvbWUgdG8geW91ciBQeXRob24gYXNzaWdubWVudC4NCiMgU3R1ZGVudCBJRDogI3t7aWR9fSB8IENvdXJzZTogI3t7Y291cnNlX3RpdGxlfX0NCiMgQXNzaWdubWVudDogI3t7cHJhY3RpY2VfdGl0bGV9fQ0KDQojIDEuIENyZWF0ZSBhIGZ1bmN0aW9uIHRoYXQgYWRkcyB0d28gbnVtYmVycw0KZGVmIGFkZF9udW1iZXJzKGEsIGIpOg0KICAgICMgVE9ETzogV3JpdGUgeW91ciBjb2RlIGhlcmUNCiAgICBwYXNzDQoNCiMgMi4gQ3JlYXRlIGEgZnVuY3Rpb24gdGhhdCBjaGVja3MgaWYgYSBudW1iZXIgaXMgZXZlbg0KZGVmIGlzX2V2ZW4obnVtKToNCiAgICAjIFRPRE86IFdyaXRlIHlvdXIgY29kZSBoZXJlDQogICAgcGFzcw=="
+		 data-config-code="IyBDb25maWd1cmF0aW9uIGNvZGUgcnVucyBiZWZvcmUgc3R1ZGVudCBjb2RlDQojIFRoaXMgY29kZSBpcyBoaWRkZW4gZnJvbSBzdHVkZW50cyBhbmQgc2V0cyB1cCB0aGUgZW52aXJvbm1lbnQNCg0KZGVmIHJ1bl90ZXN0cygpOg0KICAgIHByaW50KCJSdW5uaW5nIHRlc3RzLi4uIikNCiAgICANCiAgICAjIFRlc3QgYWRkX251bWJlcnMgZnVuY3Rpb24NCiAgICByZXN1bHQgPSBhZGRfbnVtYmVycygxNSwgMjUpDQogICAgcHJpbnQoZiJhZGRfbnVtYmVycygxNSwgMjUpID0ge3Jlc3VsdH0iLCAiQ29ycmVjdCEiIGlmIHJlc3VsdCA9PSA0MCBlbHNlICJJbmNvcnJlY3QiKQ0KICAgIA0KICAgICMgVGVzdCBpc19ldmVuIGZ1bmN0aW9uDQogICAgZXZlbl90ZXN0ID0gaXNfZXZlbig4KQ0KICAgIHByaW50KGYiaXNfZXZlbig4KSA9IHtldmVuX3Rlc3R9IiwgIkNvcnJlY3QhIiBpZiBldmVuX3Rlc3QgPT0gVHJ1ZSBlbHNlICJJbmNvcnJlY3QiKQ0KDQogICAgIyBJZiBib3RoIGFyZSBjb3JyZWN0LCBjb25ncmF0dWxhdGUgdGhlIHN0dWRlbnQNCiAgICBpZiByZXN1bHQgPT0gNDAgYW5kIGV2ZW5fdGVzdDoNCiAgICAgICAgcHJpbnQoIkdyZWF0IGpvYiAje3tmaXJzdF9uYW1lfX0iKQ0KDQojIFN0dWRlbnQgY29kZSB3aWxsIGJlIGluc2VydGVkIGhlcmU6DQoje3tzdHVkZW50X2NvZGV9fQ0KDQojIFJ1biB0aGUgdGVzdHMNCnJ1bl90ZXN0cygp"
+		 data-instructions="PGgxPkNvZGUgUHJhY3RpY2UgMS4xIEluc3RydWN0aW9uczwvaDE+DQo8cD5GaW5pc2ggdGhlIHR3byBQeXRob24gZnVuY3Rpb25zIHRoYXQgaGF2ZSBiZWVuIHN0YXJ0ZWQgZm9yIHlvdTo8L3A+DQo8b2w+DQo8bGk+PHA+PGNvZGU+YWRkX251bWJlcnM8L2NvZGU+IC0gU2hvdWxkIHJldHVybiB0aGUgcmVzdWx0IG9mIGFkZGluZyB0aGUgdHdvIHBhcmFtZXRlciB2YWx1ZXMuPC9wPg0KPC9saT4NCjxsaT48cD48Y29kZT5pc19ldmVuPC9jb2RlPiAtIFNob3VsZCByZXR1cm4gPGNvZGU+VHJ1ZTwvY29kZT4gaWYgdGhlIHBhcmFtZXRlciBpcyBhbiBldmVuIG51bWJlciwgb3RoZXJ3aXNlIDxjb2RlPkZhbHNlPC9jb2RlPi48L3A+DQo8L2xpPg0KPC9vbD4NCjxibG9ja3F1b3RlPg0KPHA+WW91IGNhbiB1c2U6IDxjb2RlPm51bSAlIDIgPT0gMDwvY29kZT4gdG8gZGV0ZXJtaW5lIGlmIDxjb2RlPm51bTwvY29kZT4gaXMgZXZlbi48L3A+DQo8L2Jsb2NrcXVvdGU+DQo="
+		 data-course-title="Intro to Python Programming"
 		 data-practice-title="Code Practice 1.1"
-		 data-object-id="csharp-introduction-to-programming-code-practice-1-1">
+		 data-object-id="intro-to-python-programming-code-practice-1-1">
 	</div>
 	
 	<script>

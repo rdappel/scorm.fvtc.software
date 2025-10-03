@@ -173,9 +173,56 @@ input[readonly] {
 #monacoConfigCode,
 #monacoStartingCode {
   width: 100%;
-  height: 300px;
+  height: 450px;
   border: 1px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+/* Variable Buttons Panel */
+.variable-buttons-panel {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  padding: 12px;
   margin-bottom: 20px;
+}
+
+.variable-buttons-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.variable-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.var-btn {
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #0969da;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  position: relative;
+}
+
+.var-btn:hover {
+  background: #f6f8fa;
+  border-color: #0969da;
+  transform: translateY(-1px);
+}
+
+.var-btn:active {
+  background: #e6f3ff;
+  transform: translateY(0);
 }
 
 .button-group {

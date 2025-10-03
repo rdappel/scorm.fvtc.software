@@ -46,6 +46,113 @@ function generateObjectId() {
 	}
 }
 
+// Variable insertion functions
+function getVariableFormat(language, variable) {
+	const formats = {
+		'javascript': `/*{{${variable}}}*/`,
+		'java': `/*{{${variable}}}*/`,
+		'csharp': `/*{{${variable}}}*/`,
+		'cpp': `/*{{${variable}}}*/`,
+		'python': `#{{${variable}}}`,
+		'php': `/*{{${variable}}}*/`,
+		'powershell': `<#{{${variable}}}#>`
+	};
+	
+	return formats[language] || `/*{{${variable}}}*/`;
+}
+
+function insertVariableIntoEditor(editorType, variable) {
+	try {
+		const languageSelect = document.getElementById('language');
+		const currentLanguage = languageSelect ? languageSelect.value : 'javascript';
+		
+		let editor;
+		if (editorType === 'config' && window.monacoConfigEditor) {
+			editor = window.monacoConfigEditor;
+		} else if (editorType === 'starting' && window.monacoStartingEditor) {
+			editor = window.monacoStartingEditor;
+		}
+		
+		if (!editor) {
+			console.warn('Editor not found:', editorType);
+			return;
+		}
+		
+		// Get the formatted variable based on language
+		const formattedVariable = getVariableFormat(currentLanguage, variable);
+		
+		// Get current cursor position
+		const position = editor.getPosition();
+		const range = new monaco.Range(
+			position.lineNumber,
+			position.column,
+			position.lineNumber,
+			position.column
+		);
+		
+		// Insert the variable at cursor position
+		editor.executeEdits('insert-variable', [{
+			range: range,
+			text: formattedVariable
+		}]);
+		
+		// Set focus back to the editor and position cursor after inserted text
+		editor.focus();
+		const newPosition = new monaco.Position(
+			position.lineNumber,
+			position.column + formattedVariable.length
+		);
+		editor.setPosition(newPosition);
+		
+		console.log(`Inserted ${formattedVariable} into ${editorType} editor`);
+	} catch (error) {
+		console.error('Error inserting variable:', error);
+	}
+}
+
+function insertTextIntoEditor(editorType, text) {
+	try {
+		let editor;
+		if (editorType === 'config' && window.monacoConfigEditor) {
+			editor = window.monacoConfigEditor;
+		} else if (editorType === 'starting' && window.monacoStartingEditor) {
+			editor = window.monacoStartingEditor;
+		}
+		
+		if (!editor) {
+			console.warn('Editor not found:', editorType);
+			return;
+		}
+		
+		// Get current cursor position
+		const position = editor.getPosition();
+		const range = new monaco.Range(
+			position.lineNumber,
+			position.column,
+			position.lineNumber,
+			position.column
+		);
+		
+		// Insert the text at cursor position
+		editor.executeEdits('insert-text', [{
+			range: range,
+			text: text
+		}]);
+		
+		// Set focus back to the editor and position cursor after inserted text
+		editor.focus();
+		const newPosition = new monaco.Position(
+			position.lineNumber,
+			position.column + text.length
+		);
+		editor.setPosition(newPosition);
+		
+		console.log(`Inserted "${text}" into ${editorType} editor`);
+	} catch (error) {
+		console.error('Error inserting text:', error);
+	}
+}
+
 // Improved Monaco loading with retry mechanism
 let monacoLoadAttempts = 0;
 const MAX_MONACO_ATTEMPTS = 10;
@@ -267,6 +374,44 @@ function setupEventListeners(savedData) {
 		console.log('Event listeners attached successfully');
 	} catch (listenerError) {
 		console.error('Failed to attach event listeners:', listenerError);
+	}
+
+	// Variable button event listeners
+	try {
+		const variableButtons = document.querySelectorAll('.var-btn');
+		variableButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				const editorType = this.dataset.editor;
+				const variable = this.dataset.variable;
+				
+				// Extract just the variable name from the button text
+				// Handle cases like "{{first_name}}" or "/*{{first_name}}*/"
+				let variableName = variable;
+				const match = variable.match(/\{\{([^}]+)\}\}/);
+				if (match) {
+					variableName = match[1];
+				}
+				
+				// Special handling for non-variable buttons like TODO comments
+				if (variable.includes('TODO')) {
+					// Insert the exact text for TODO comments
+					insertTextIntoEditor(editorType, variable);
+				} else {
+					// Insert formatted variable
+					insertVariableIntoEditor(editorType, variableName);
+				}
+				
+				// Visual feedback
+				this.style.background = '#e6f3ff';
+				setTimeout(() => {
+					this.style.background = '#fff';
+				}, 200);
+			});
+		});
+		
+		console.log(`Set up ${variableButtons.length} variable button listeners`);
+	} catch (varButtonError) {
+		console.error('Failed to attach variable button listeners:', varButtonError);
 	}
 
 	// Clear storage button handler
