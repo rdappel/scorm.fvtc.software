@@ -9,7 +9,7 @@ const __dirname = join(__filename, '..', '..', '..')
 
 // Pure function for sanitizing strings
 const sanitizeString = str => 
-	str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+	(str || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
 
 // Pure function for generating object IDs
 const generateObjectId = (courseTitle, lessonTitle) => {

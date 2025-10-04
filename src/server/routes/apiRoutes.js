@@ -10,8 +10,8 @@ const router = Router()
 // SCORM generation API
 router.post('/generate', upload.single('contentZip'), generateScorm)
 
-// Lesson generation API
-router.post('/lesson', generateLesson)
+// Lesson generation API - use upload.none() to parse form data without files
+router.post('/lesson', upload.none(), generateLesson)
 
 // File download API  
 router.get('/download/:file', downloadFile)

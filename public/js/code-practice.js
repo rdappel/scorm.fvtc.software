@@ -1,5 +1,6 @@
 // Code Practice Form Handler
 import EXAMPLES from './code-practice-examples.js';
+import { updateObjectIdField } from './object-id-generator.js';
 
 // Helper function to get examples
 const getExamples = () => EXAMPLES;
@@ -18,32 +19,9 @@ function getMonacoLanguage(language) {
 	return languageMap[language] || 'javascript';
 }
 
-// Auto-generate Object ID function (global scope)
+// Auto-generate Object ID function (using shared module)
 function generateObjectId() {
-	try {
-		const courseTitle = document.getElementById('courseTitle').value.trim();
-		const practiceTitle = document.getElementById('practiceTitle').value.trim();
-		let objectId = '';
-
-		if (courseTitle || practiceTitle) {
-			// Create ID from course and practice titles
-			objectId = (courseTitle + '-' + practiceTitle)
-				.replace(/C#/g, 'csharp')
-				.replace(/C\+\+/g, 'cpp')
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, '-')
-				.replace(/^-+|-+$/g, '')
-				.replace(/-+/g, '-');
-		}
-
-		const objectIdField = document.getElementById('objectId');
-		if (objectIdField) {
-			objectIdField.value = objectId;
-			console.log('Generated object ID:', objectId);
-		}
-	} catch (error) {
-		console.error('Error generating object ID:', error);
-	}
+	updateObjectIdField('courseTitle', 'practiceTitle', 'objectId');
 }
 
 // Variable insertion functions

@@ -153,7 +153,7 @@ scorm.fvtc.software/
 │       └── index.html             # Example SCORM content
 ├── public/                        # Static assets served to browser
 │   ├── css/
-│   │   └── wizard.css            # Main application styling
+│   │   └── style.css            # Main application styling
 │   └── js/
 │       ├── code-practice.js      # Main code practice functionality
 │       └── code-practice-examples.js # Language-specific examples
