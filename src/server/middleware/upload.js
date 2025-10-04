@@ -8,12 +8,18 @@ const { ensureDirSync } = pkg
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Directories
-const uploadsDir = path.join(__dirname, '../uploads')
+// Pure function for creating uploads directory path
+const createUploadsDir = __dirname => path.join(__dirname, '../uploads')
+
+// Pure function for creating multer configuration
+const createUploadConfig = destination => ({
+	dest: destination,
+	limits: { fileSize: 200 * 1024 * 1024 } // 200MB
+})
+
+// Initialize upload configuration
+const uploadsDir = createUploadsDir(__dirname)
 ensureDirSync(uploadsDir)
 
 // Multer configuration for file uploads
-export const upload = multer({
-	dest: uploadsDir,
-	limits: { fileSize: 200 * 1024 * 1024 } // 200MB
-})
+export const upload = multer(createUploadConfig(uploadsDir))

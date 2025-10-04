@@ -8,8 +8,34 @@ import { logger } from '../utils/logger.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Pure function for creating paths
+const createDistDir = __dirname => path.join(__dirname, '../../../dist')
+
 // Directories
-const distDir = path.join(__dirname, '../../../dist')
+const distDir = createDistDir(__dirname)
+
+// Pure function for filename validation
+const isValidFilename = (filename, safeFilename) => 
+	safeFilename && safeFilename === filename
+
+// Pure function for path security validation
+const isSecurePath = (filePath, distDir) => {
+	const resolvedPath = path.resolve(filePath)
+	const resolvedDistDir = path.resolve(distDir)
+	return resolvedPath.startsWith(resolvedDistDir)
+}
+
+// Higher-order function for file access checking
+const withFileAccess = accessFn => async filePath => {
+	try {
+		await accessFn(filePath, constants.F_OK | constants.R_OK)
+		return filePath
+	} catch (error) {
+		throw new Error('File not found')
+	}
+}
+
+const checkFileAccess = withFileAccess(access)
 
 /**
  * Validate and get safe file path for download
@@ -17,11 +43,11 @@ const distDir = path.join(__dirname, '../../../dist')
  * @returns {Promise<string>} Safe file path
  * @throws {Error} If file doesn't exist or is invalid
  */
-export const getDownloadPath = async (filename) => {
+export const getDownloadPath = async filename => {
 	// Sanitize filename to prevent directory traversal
 	const safeFilename = sanitize(filename)
 	
-	if (!safeFilename || safeFilename !== filename) {
+	if (!isValidFilename(filename, safeFilename)) {
 		throw new Error('Invalid filename')
 	}
 	
@@ -29,17 +55,14 @@ export const getDownloadPath = async (filename) => {
 	
 	// Ensure file exists and is accessible
 	try {
-		await access(filePath, constants.F_OK | constants.R_OK)
+		await checkFileAccess(filePath)
 	} catch (error) {
 		logger.warn(`File access denied or not found: ${safeFilename}`)
-		throw new Error('File not found')
+		throw error
 	}
 	
 	// Ensure the file is within the dist directory (security check)
-	const resolvedPath = path.resolve(filePath)
-	const resolvedDistDir = path.resolve(distDir)
-	
-	if (!resolvedPath.startsWith(resolvedDistDir)) {
+	if (!isSecurePath(filePath, distDir)) {
 		logger.warn(`Directory traversal attempt detected: ${filename}`)
 		throw new Error('Invalid file path')
 	}

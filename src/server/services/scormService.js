@@ -13,69 +13,105 @@ import { logger } from '../utils/logger.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Directories
-const uploadsDir = path.join(__dirname, '../uploads')
-const distDir = path.join(__dirname, '../../../dist')
-ensureDirSync(uploadsDir)
-ensureDirSync(distDir)
+// Pure function for creating directory paths
+const createPaths = __dirname => ({
+	uploads: path.join(__dirname, '../uploads'),
+	dist: path.join(__dirname, '../../../dist')
+})
+
+// Initialize directories
+const paths = createPaths(__dirname)
+ensureDirSync(paths.uploads)
+ensureDirSync(paths.dist)
+
+// Pure function for creating code practice spec
+const createCodePracticeSpec = formData => ({
+	title: formData.practiceTitle,
+	identifier: formData.objectId,
+	scormVersion: '1.2',
+	launch: 'index.html',
+	objectType: 'code-practice',
+	courseTitle: formData.courseTitle,
+	practiceTitle: formData.practiceTitle,
+	language: formData.language,
+	instructions: formData.instructions,
+	instructionsMarkdown: formData.instructionsMarkdown || '',
+	startingCode: formData.startingCode || '',
+	configCode: formData.configCode || '',
+	metadata: {
+		author: 'SCORM Generator',
+		description: formData.practiceTitle
+	}
+})
+
+// Pure function for creating legacy spec from JSON
+const createLegacySpec = formData => {
+	if (!formData.specJson?.trim()) {
+		throw new Error('Missing spec JSON')
+	}
+	
+	const spec = JSON.parse(formData.specJson)
+	return {
+		...spec,
+		scormVersion: spec.scormVersion || '1.2'
+	}
+}
+
+// Pure function for determining file type
+const isZipFile = file => 
+	file.mimetype === 'application/zip' || 
+	file.originalname.toLowerCase().endsWith('.zip')
+
+// Function for validating file type
+const validateFileType = file => {
+	if (!isZipFile(file)) {
+		throw new Error('Uploaded content must be a .zip')
+	}
+	return file
+}
+
+// Function for creating generation options
+const createGenerationOptions = (spec, contentPath = null) => ({
+	spec: contentPath ? { ...spec, contentPath } : spec,
+	outdir: paths.dist,
+	tmpDir: path.join(paths.uploads, 'work'),
+	zip: true
+})
+
+// Higher-order function for error handling
+const withErrorHandling = fn => async (...args) => {
+	try {
+		return await fn(...args)
+	} catch (error) {
+		logger.error(`Error in ${fn.name}:`, error)
+		throw error
+	}
+}
 
 /**
  * Create a SCORM specification object from form data
  * @param {Object} formData - The form data from the request
  * @returns {Object} SCORM specification object
  */
-export const createScormSpec = (formData) => {
-	if (formData.objectType === 'code-practice') {
-		return {
-			title: formData.practiceTitle,
-			identifier: formData.objectId,
-			scormVersion: '1.2',
-			launch: 'index.html',
-			objectType: 'code-practice',
-			courseTitle: formData.courseTitle,
-			practiceTitle: formData.practiceTitle,
-			language: formData.language,
-			instructions: formData.instructions,
-			instructionsMarkdown: formData.instructionsMarkdown || '',
-			startingCode: formData.startingCode || '',
-			configCode: formData.configCode || '',
-			metadata: {
-				author: 'SCORM Generator',
-				description: formData.practiceTitle
-			}
-		}
-	} else {
-		// Handle legacy JSON format
-		if (!formData.specJson?.trim()) {
-			throw new Error('Missing spec JSON')
-		}
-
-		const spec = JSON.parse(formData.specJson)
-		spec.scormVersion = spec.scormVersion || '1.2'
-		return spec
-	}
-}
+export const createScormSpec = formData => 
+	formData.objectType === 'code-practice' 
+		? createCodePracticeSpec(formData)
+		: createLegacySpec(formData)
 
 /**
  * Process uploaded content zip file
  * @param {Object} file - Multer file object
  * @returns {Promise<string>} Path to extracted content
  */
-export const processContentZip = async (file) => {
+export const processContentZip = withErrorHandling(async file => {
 	if (!file) return null
-
-	const isZip = file.mimetype === 'application/zip' ||
-		file.originalname.toLowerCase().endsWith('.zip')
-
-	if (!isZip) {
-		throw new Error('Uploaded content must be a .zip')
-	}
-
-	const tempExtractDir = await mkdtemp(path.join(os.tmpdir(), 'scorm-content-'))
-	await extract(file.path, { dir: tempExtractDir })
 	
-	return tempExtractDir
-}
+	const validatedFile = validateFileType(file)
+	const temporaryExtractDirectory = await mkdtemp(path.join(os.tmpdir(), 'scorm-content-'))
+	await extract(validatedFile.path, { dir: temporaryExtractDirectory })
+	
+	return temporaryExtractDirectory
+})
 
 /**
  * Generate SCORM package
@@ -83,25 +119,16 @@ export const processContentZip = async (file) => {
  * @param {string} contentPath - Optional path to extracted content
  * @returns {Promise<Object>} Build information
  */
-export const generateScormPackage = async (spec, contentPath = null) => {
+export const generateScormPackage = withErrorHandling(async (spec, contentPath = null) => {
 	// Validate specification
 	const validation = validateSpec(spec)
 	if (!validation.valid) {
 		throw new Error(`Invalid spec: ${validation.errors.join(', ')}`)
 	}
 
-	// Set content path if provided
-	if (contentPath) {
-		spec.contentPath = contentPath
-	}
-
 	// Generate package
-	const buildInfo = await generate({
-		spec,
-		outdir: distDir,
-		tmpDir: path.join(uploadsDir, 'work'),
-		zip: true
-	})
+	const options = createGenerationOptions(spec, contentPath)
+	const buildInfo = await generate(options)
 
 	logger.info('SCORM package generated successfully:', {
 		title: spec.title,
@@ -110,35 +137,27 @@ export const generateScormPackage = async (spec, contentPath = null) => {
 	})
 
 	return buildInfo
-}
+})
 
 /**
  * Clean up temporary directories and work files
- * @param {string} tempDir - Path to temporary directory to clean up
+ * @param {string} temporaryDirectory - Path to temporary directory to clean up
  * @returns {Promise<void>}
  */
-export const cleanupTempDir = async (tempDir) => {
-	if (tempDir) {
-		try {
-			await rm(tempDir, { recursive: true, force: true })
-			logger.info('Cleaned up temporary directory:', tempDir)
-		} catch (error) {
-			logger.error('Failed to clean up temporary directory:', error)
-		}
-	}
-}
+export const cleanupTempDir = withErrorHandling(async temporaryDirectory => {
+	if (!temporaryDirectory) return
+	
+	await rm(temporaryDirectory, { recursive: true, force: true })
+	logger.info('Cleaned up temporary directory:', temporaryDirectory)
+})
 
 /**
  * Clean up work directory after SCORM generation
- * @param {string} workDir - Path to work directory
+ * @param {string} workingDirectory - Path to work directory
  * @returns {Promise<void>}
  */
-export const cleanupWorkDir = async (workDir) => {
-	try {
-		const { emptyDir } = await import('fs-extra')
-		await emptyDir(workDir)
-		logger.info('Cleaned up work directory:', workDir)
-	} catch (error) {
-		logger.error('Failed to clean up work directory:', error)
-	}
-}
+export const cleanupWorkDir = withErrorHandling(async workingDirectory => {
+	const { emptyDir } = await import('fs-extra')
+	await emptyDir(workingDirectory)
+	logger.info('Cleaned up work directory:', workingDirectory)
+})

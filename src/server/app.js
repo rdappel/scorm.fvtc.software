@@ -8,29 +8,65 @@ import { cleanupDistFiles, cleanupWorkDirectory } from './utils/cleanup.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-dotenv.config()
-const app = express()
-
-// view engine
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, '../../views'))
-
-// middleware
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use('/public', express.static(path.join(__dirname, '../../public')))
-
-// routes
-app.use('/', routes)
-app.get('/monaco-test', (req, res) => {
-  res.render('index');
-});
-
-const port = process.env.PORT || 3007
-app.listen(port, async () => {
-	console.log(`scorm-gen UI listening on http://localhost:${port}`)
-	
-	// Clean up old files on server start
-	await cleanupDistFiles(12, 10) // Keep max 10 files, delete files older than 12 hours
-	await cleanupWorkDirectory() // Clean temporary build files
+// Pure function for creating paths
+const createPaths = __dirname => ({
+	views: path.join(__dirname, '../../views'),
+	public: path.join(__dirname, '../../public')
 })
+
+// Pure function for creating app configuration
+const createAppConfig = paths => app => {
+	app.set('view engine', 'ejs')
+	app.set('views', paths.views)
+	return app
+}
+
+// Pure function for creating middleware configuration
+const createMiddleware = paths => app => {
+	app.use(express.urlencoded({ extended: true }))
+	app.use(express.json())
+	app.use('/public', express.static(paths.public))
+	return app
+}
+
+// Pure function for creating routes configuration
+const createRoutes = routes => app => {
+	app.use('/', routes)
+	app.get('/monaco-test', (_, response) => {
+		response.render('index')
+	})
+	return app
+}
+
+// Pure function for getting port
+const getPort = () => process.env.PORT || 3007
+
+// Function for performing startup cleanup
+const performStartupCleanup = async () => {
+	// Keep max 10 files, delete files older than 12 hours
+	await cleanupDistFiles(12, 10)
+	// Clean temporary build files
+	await cleanupWorkDirectory()
+}
+
+// Function for creating server
+const createServer = (app, port) => {
+	app.listen(port, async () => {
+		console.log(`scorm-gen UI listening on http://localhost:${port}`)
+		await performStartupCleanup()
+	})
+}
+
+// Application composition
+dotenv.config()
+const paths = createPaths(__dirname)
+const port = getPort()
+
+const app = [
+	express(),
+	createAppConfig(paths),
+	createMiddleware(paths),
+	createRoutes(routes)
+].reduce((app, configFn) => configFn(app))
+
+createServer(app, port)

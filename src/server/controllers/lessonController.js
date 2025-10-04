@@ -1,38 +1,63 @@
 import { lessonService } from '../services/lessonService.js'
 import { logger } from '../utils/logger.js'
 
-export const getLesson = (req, res) => {
-	res.render('lesson')
-}
+// Pure function for extracting filename from path
+const extractFilename = zipPath => 
+	zipPath.split('/').pop() || 'lesson-scorm.zip'
 
-export const generateLesson = async (req, res) => {
+// Pure function for creating download headers
+const createDownloadHeaders = filename => ({
+	'Content-Disposition': `attachment; filename="${filename}"`,
+	'Content-Type': 'application/zip'
+})
+
+// Function for setting response headers
+const setHeaders = (res, headers) => 
+	Object.entries(headers).forEach(([key, value]) => 
+		res.setHeader(key, value)
+	)
+
+// Higher-order function for error handling
+const withErrorHandling = fn => async (request, response) => {
 	try {
-		logger.info('Lesson generation request received:', req.body)
-		
-		const result = await lessonService.generateLessonScorm(req.body)
-		
-		logger.info('Lesson SCORM generated successfully:', {
-			zipPath: result.zipPath,
-			scormVersion: result.scormVersion
-		})
-		
-		// Set headers for file download
-		const filename = result.zipPath.split('/').pop() || 'lesson-scorm.zip'
-		res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
-		res.setHeader('Content-Type', 'application/zip')
-		
-		// Send the file
-		res.download(result.zipPath, (err) => {
-			if (err) {
-				logger.error('Error sending lesson SCORM file:', err)
-				if (!res.headersSent) {
-					res.status(500).send('Error downloading file')
-				}
-			}
-		})
-		
+		await fn(request, response)
 	} catch (error) {
-		logger.error('Error generating lesson SCORM:', error)
-		res.status(500).send(error.message)
+		logger.error(`Error in ${fn.name}:`, error)
+		response.status(500).send(error.message)
 	}
 }
+
+// Pure render function
+export const getLesson = (_, response) => {
+	response.render('lesson')
+}
+
+// Core lesson generation logic
+const executeLessonGeneration = async (request, response) => {
+	logger.info('Lesson generation request received:', request.body)
+	
+	const result = await lessonService.generateLessonScorm(request.body)
+	
+	logger.info('Lesson SCORM generated successfully:', {
+		zipPath: result.zipPath,
+		scormVersion: result.scormVersion
+	})
+	
+	// Set headers and send file
+	const filename = extractFilename(result.zipPath)
+	const headers = createDownloadHeaders(filename)
+	setHeaders(response, headers)
+	
+	// Send the file with error handling
+	response.download(result.zipPath, (error) => {
+		if (error) {
+			logger.error('Error sending lesson SCORM file:', error)
+			if (!response.headersSent) {
+				response.status(500).send('Error downloading file')
+			}
+		}
+	})
+}
+
+// Exported controller with error handling
+export const generateLesson = withErrorHandling(executeLessonGeneration)

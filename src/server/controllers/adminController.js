@@ -2,7 +2,7 @@
 import { cleanupDistFiles, cleanupWorkDirectory } from '../utils/cleanup.js'
 import { logger } from '../utils/logger.js'
 
-export const performCleanup = async (req, res) => {
+export const performCleanup = async (_, response) => {
 	try {
 		logger.info('Manual cleanup initiated')
 		
@@ -19,10 +19,10 @@ export const performCleanup = async (req, res) => {
 		}
 		
 		logger.info('Cleanup completed:', result.details)
-		res.json(result)
+		response.json(result)
 	} catch (error) {
 		logger.error('Cleanup failed:', error)
-		res.status(500).json({ 
+		response.status(500).json({ 
 			success: false, 
 			error: error.message,
 			message: 'Cleanup operation failed'
