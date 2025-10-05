@@ -1,14 +1,14 @@
 
 - [ ] Lecture Scorm Object
 	- [x] remove placeholders
-
+	- [ ] page route for success is broken
 
 - [ ] Have Scorms pull from external css
 
 
 - [x] Prevent Manifest changes between generations
 
-
+- [ ] Scorm gen for code-practice brings user to /api route
 - [ ] Move lesson css to style sheet
 - [ ] Move lesson js to public/js (reuse any code?)
 
