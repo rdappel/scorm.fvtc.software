@@ -4,10 +4,10 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Code Practice Generator</title>
-	<link rel="stylesheet" href="/public/css/style.css">
+	<link rel="stylesheet" href="/public/styles/style.css">
 	<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js" defer></script>
-	<script type="module" src="/public/js/code-practice.js" defer></script>
+	<script type="module" src="/public/scripts/code-practice.js" defer></script>
 </head>
 
 <body>
@@ -236,6 +236,30 @@
 			if (activeTab && activeTab.dataset.tab === 'preview') {
 				const markdownText = instructionsTextarea.value || '*No content to preview*';
 				instructionsPreview.innerHTML = marked.parse(markdownText);
+			}
+		});
+	</script>
+
+	<script type="module">
+		// Import shared SCORM downloader utility
+		import { handleScormGeneration } from '/public/scripts/scorm-downloader.js';
+		
+		// Setup SCORM form handler using shared utility
+		document.addEventListener('DOMContentLoaded', () => {
+			const form = document.getElementById('editorForm');
+			if (form) {
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					await handleScormGeneration(form, '/api/v1/generate', {
+						defaultFilename: 'code-practice-scorm.zip',
+						onPrepareForm: () => {
+							// Call the form preparation function from code-practice.js
+							if (window.prepareFormForSubmission) {
+								window.prepareFormForSubmission();
+							}
+						}
+					});
+				});
 			}
 		});
 	</script>

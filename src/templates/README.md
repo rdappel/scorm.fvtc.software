@@ -22,7 +22,7 @@ src/templates/
 ### 2. In-Memory Processing
 - Templates are read into memory as strings
 - EJS processes placeholders with dynamic data
-- Processed content is written directly to work directory
+- Processed content is written directly to temp staging directory
 - **Source templates remain unchanged**
 
 ### 3. Available Placeholders
@@ -108,11 +108,11 @@ Templates can use these EJS variables:
 - Easy to add new placeholders
 - Simple debugging with clear template files
 
-## Work Directory Cleanup
+## Temp Directory Cleanup
 
 After each generation:
 1. **Temporary extraction directory** is cleaned up
-2. **Work directory** is emptied to prevent conflicts
+2. **Temp staging directory** is emptied to prevent conflicts
 3. **Generated SCORM package** is moved to dist/
 4. **Source templates** remain pristine
 

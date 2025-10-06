@@ -1,4 +1,4 @@
-// src/server/routes/apiRoutes.js
+
 import { Router } from 'express'
 import { upload } from '../middleware/upload.js'
 import { generateScorm } from '../controllers/scormController.js'

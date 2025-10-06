@@ -1,4 +1,4 @@
-// src/server/controllers/scormController.js
+
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { logger } from '../utils/logger.js'
@@ -7,16 +7,14 @@ import {
 	processContentZip, 
 	generateScormPackage, 
 	cleanupTempDir,
-	cleanupWorkDir
+	cleanupTempProcessingDir
 } from '../services/scormService.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Pure function for creating work directory path
-const getWorkDir = __dirname => path.join(__dirname, '../uploads/work')
+const getTempDir = dirname => path.join(dirname, '../temp')
 
-// Pure function for creating log data
 const createLogData = (settings, hasFile) => ({
 	objectType: settings.objectType,
 	title: settings.title,
@@ -25,7 +23,6 @@ const createLogData = (settings, hasFile) => ({
 	hasUploadedContent: hasFile
 })
 
-// Pure function for creating build info response
 const createBuildResponse = buildInfo => {
 	const fileName = path.basename(buildInfo.zipPath)
 	return {
@@ -35,7 +32,6 @@ const createBuildResponse = buildInfo => {
 	}
 }
 
-// Higher-order function for async error handling with cleanup
 const withCleanup = cleanupFn => fn => async (...args) => {
 	let resources = null
 	try {
@@ -49,15 +45,13 @@ const withCleanup = cleanupFn => fn => async (...args) => {
 	}
 }
 
-// Function for cleaning up SCORM generation resources
 const cleanupScormResources = async ({ temporaryExtractDirectory, workingDirectory }) => {
 	await Promise.all([
 		cleanupTempDir(temporaryExtractDirectory),
-		cleanupWorkDir(workingDirectory)
+		cleanupTempProcessingDir(workingDirectory)
 	])
 }
 
-// Core SCORM generation logic
 const executeScormGeneration = async (request, response) => {
 	// 1) Create SCORM specification from form data
 	const settings = createScormSpec(request.body)
@@ -74,7 +68,8 @@ const executeScormGeneration = async (request, response) => {
 
 	// 4) Send success response with download link
 	const responseData = createBuildResponse(buildInformation)
-	response.render('success', { buildInfo: responseData })
+	// Note: Success page rendering removed - downloads now handled client-side
+	response.json({ success: true, ...responseData })
 
 	logger.info('SCORM generation completed successfully:', {
 		fileName: responseData.fileName,
@@ -86,12 +81,11 @@ const executeScormGeneration = async (request, response) => {
 		value: buildInformation,
 		resources: {
 			temporaryExtractDirectory,
-			workingDirectory: getWorkDir(__dirname)
+			workingDirectory: getTempDir(__dirname)
 		}
 	}
 }
 
-// Main controller function with error handling and cleanup
 export const generateScorm = async (request, response) => {
 	const handleGenerationWithCleanup = withCleanup(cleanupScormResources)(executeScormGeneration)
 	
@@ -100,7 +94,7 @@ export const generateScorm = async (request, response) => {
 	} catch (error) {
 		logger.error('SCORM generation failed:', error)
 		if (!response.headersSent) {
-			response.status(400).render('index', { 
+			response.status(400).json({ 
 				error: error.message || 'Failed to generate SCORM package'
 			})
 		}

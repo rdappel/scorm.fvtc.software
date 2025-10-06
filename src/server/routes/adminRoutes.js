@@ -1,4 +1,4 @@
-// src/server/routes/adminRoutes.js
+
 import { Router } from 'express'
 import { performCleanup } from '../controllers/adminController.js'
 

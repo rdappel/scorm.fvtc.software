@@ -17,7 +17,7 @@ src/server/
 │   ├── adminRoutes.js       # Admin API routes (/api/v1/admin/*)
 │   ├── apiRoutes.js         # Core API routes (/api/v1/*)
 │   ├── pageRoutes.js        # Page routes (/)
-│   └── index.js             # Route aggregation with versioning
+│   └── router.js            # Main router coordinator with versioning
 ├── services/             # Business logic layer
 │   ├── fileService.js       # File operations and security
 │   └── scormService.js      # SCORM generation logic
@@ -33,9 +33,8 @@ src/server/
 │   ├── API.md               # API documentation
 │   └── README.md            # Architecture documentation
 ├── uploads/              # File upload directory (gitignored)
-│   └── work/                # Temporary processing directory
-├── app.js               # Express application setup
-└── routes.js            # Main routes entry point
+│   └── temp/                # Temporary SCORM generation workspace
+└── app.js               # Express application setup
 ```
 
 ## Architecture Principles
@@ -105,8 +104,8 @@ export const handleNewFeature = async (req, res) => {
 
 3. **Routes** (endpoint definition):
 ```javascript
-// src/server/routes.js
-import { handleNewFeature } from './controllers/newFeatureController.js'
+// src/server/routes/apiRoutes.js
+import { handleNewFeature } from '../controllers/newFeatureController.js'
 
 router.post('/new-feature', handleNewFeature)
 ```

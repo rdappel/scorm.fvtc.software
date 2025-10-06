@@ -1,4 +1,4 @@
-// src/server/routes/pageRoutes.js
+
 import { Router } from 'express'
 import { getHome, getCodePractice } from '../controllers/homeController.js'
 import { getLesson } from '../controllers/lessonController.js'

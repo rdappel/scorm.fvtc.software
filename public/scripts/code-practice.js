@@ -622,43 +622,52 @@ function setupMonacoDependentHandlers(savedData) {
 		});
 	}
 
+	// Function to prepare form data before submission
+	function prepareFormForSubmission() {
+		try {
+			// Set hidden form values before submission
+			const configCodeField = document.getElementById('configCode');
+			const startingCodeField = document.getElementById('startingCode');
+			const instructionsField = document.getElementById('instructions');
+			const instructionsMarkdownField = document.getElementById('instructionsMarkdown');
+
+			if (configCodeField && window.monacoConfigEditor) {
+				configCodeField.value = window.monacoConfigEditor.getValue();
+			}
+			if (startingCodeField && window.monacoStartingEditor) {
+				startingCodeField.value = window.monacoStartingEditor.getValue();
+			}
+
+			// Handle instructions: store markdown in hidden field, convert to HTML for SCORM
+			if (instructionsField && instructionsMarkdownField) {
+				const markdownText = instructionsField.value || '';
+				
+				// Always store the original markdown in the hidden field
+				instructionsMarkdownField.value = markdownText;
+				
+				// Convert to HTML for SCORM generation (instructions field)
+				if (markdownText.trim() && typeof marked !== 'undefined') {
+					instructionsField.value = marked.parse(markdownText);
+				}
+				// If marked isn't available, send as-is (markdown will work fine)
+			}
+
+			// Save the current state (with markdown) to localStorage
+			saveFormData();
+		} catch (error) {
+			console.error('Error preparing form for submission:', error);
+		}
+	}
+
+	// Expose the function globally so it can be called from the EJS file
+	window.prepareFormForSubmission = prepareFormForSubmission;
+
 	// Form submission
 	const editorForm = document.getElementById('editorForm');
 	if (editorForm) {
 		editorForm.addEventListener('submit', function (e) {
-			try {
-				// Set hidden form values before submission
-				const configCodeField = document.getElementById('configCode');
-				const startingCodeField = document.getElementById('startingCode');
-				const instructionsField = document.getElementById('instructions');
-				const instructionsMarkdownField = document.getElementById('instructionsMarkdown');
-
-				if (configCodeField && window.monacoConfigEditor) {
-					configCodeField.value = window.monacoConfigEditor.getValue();
-				}
-				if (startingCodeField && window.monacoStartingEditor) {
-					startingCodeField.value = window.monacoStartingEditor.getValue();
-				}
-
-				// Handle instructions: store markdown in hidden field, convert to HTML for SCORM
-				if (instructionsField && instructionsMarkdownField) {
-					const markdownText = instructionsField.value || '';
-					
-					// Always store the original markdown in the hidden field
-					instructionsMarkdownField.value = markdownText;
-					
-					// Convert to HTML for SCORM generation (instructions field)
-					if (markdownText.trim() && typeof marked !== 'undefined') {
-						instructionsField.value = marked.parse(markdownText);
-					}
-					// If marked isn't available, send as-is (markdown will work fine)
-				}
-
-				// Save the current state (with markdown) to localStorage
-				saveFormData();
-			} catch (submitError) {
-				console.error('Form submission error:', submitError);
-			}
+			// Only prepare form data, don't prevent default - let the custom handler in EJS take over
+			prepareFormForSubmission();
 		});
 	}
 

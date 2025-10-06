@@ -161,15 +161,19 @@ scorm.fvtc.software/
 │   ├── generator.js              # Core SCORM package generation
 │   ├── server/
 │   │   ├── app.js               # Express.js server configuration
-│   │   ├── cleanup.js           # Temporary file cleanup utilities
-│   │   ├── logger.js            # Application logging
-│   │   ├── routes.js            # API endpoint definitions
-│   │   ├── validate.js          # Input validation middleware
-│   │   ├── zipper.js            # ZIP file generation utilities
-│   │   ├── schema/
-│   │   │   └── course.schema.json # JSON schema for validation
+│   │   ├── controllers/         # Request handlers
+│   │   ├── routes/              # API route definitions
+│   │   │   ├── router.js        # Main router coordinator
+│   │   │   ├── pageRoutes.js    # Static page routes
+│   │   │   ├── apiRoutes.js     # API endpoints
+│   │   │   └── adminRoutes.js   # Admin endpoints
+│   │   ├── services/            # Business logic
+│   │   ├── utils/               # Utility functions
+│   │   ├── config/
+│   │   │   └── schema/
+│   │   │       └── course.schema.json # JSON schema for validation
 │   │   └── uploads/
-│   │       └── work/            # Temporary file processing area
+│   │       └── temp/            # Temporary SCORM generation workspace
 │   └── templates/
 │       ├── code-practice/       # Code practice SCORM template
 │       │   ├── index.html      # SCORM content wrapper
@@ -184,10 +188,17 @@ scorm.fvtc.software/
 │           ├── api-adapter-1.2.js # SCORM API adapter
 │           ├── imsmanifest.ejs    # SCORM manifest template
 │           └── launch.ejs         # SCORM launch page template
-└── views/                        # EJS templates for web interface
-    ├── index.ejs                 # Main menu/landing page
-    ├── code-practice.ejs         # Code practice object creation form
-    └── success.ejs               # Success/download page
+└── public/                       # Static files served to clients
+    ├── index.html                # Main menu/landing page  
+    ├── code-practice.html        # Code practice object creation form
+    ├── lesson.html               # Lesson object creation form
+    ├── scripts/                  # Client-side JavaScript
+    │   ├── code-practice.js      # Code practice form logic
+    │   ├── code-practice-examples.js # Pre-built examples
+    │   ├── object-id-generator.js    # Auto ID generation
+    │   └── scorm-downloader.js   # Shared SCORM download utility
+    └── styles/
+        └── style.css             # Application styles
 ```
 
 ## API Endpoints

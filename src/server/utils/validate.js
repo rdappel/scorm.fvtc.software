@@ -8,22 +8,19 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// Pure function for creating schema path
-const createSchemaPath = __dirname => 
-	join(__dirname, '../config/schema', 'course.schema.json')
+// Helper functions
+const createSchemaPath = dirname => 
+	join(dirname, '../config/schema', 'course.schema.json')
 
-// Pure function for loading schema
 const loadSchema = filePath => 
 	JSON.parse(readFileSync(filePath, 'utf8'))
 
-// Pure function for creating validator
 const createValidator = schema => {
 	const ajv = new Ajv({ allErrors: true, strict: false })
 	addFormats(ajv)
 	return ajv.compile(schema)
 }
 
-// Pure function for formatting validation errors
 const formatErrors = errors => 
 	errors.map(e => `${e.instancePath} ${e.message}`)
 

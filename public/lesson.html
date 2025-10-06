@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Lesson Generator</title>
-	<link rel="stylesheet" href="/public/css/style.css">
+	<link rel="stylesheet" href="/public/styles/style.css">
 </head>
 
 <body>
@@ -319,59 +319,30 @@
 				}
 			})
 		})
-
-		// Original form submission handler
-		document.getElementById('lesson-form').addEventListener('submit', async (e) => {
-			e.preventDefault()
-			
-			const submitButton = e.target.querySelector('button[type="submit"]')
-			const originalText = submitButton.textContent
-			submitButton.textContent = 'Generating...'
-			submitButton.disabled = true
-			
-			try {
-				const formData = new FormData(e.target)
-				const response = await fetch('/api/v1/lesson', {
-					method: 'POST',
-					body: formData
-				})
-				
-				if (response.ok) {
-					const blob = await response.blob()
-					const url = window.URL.createObjectURL(blob)
-					const a = document.createElement('a')
-					a.href = url
-					a.download = response.headers.get('Content-Disposition')?.split('filename=')[1] || 'lesson-scorm.zip'
-					document.body.appendChild(a)
-					a.click()
-					window.URL.revokeObjectURL(url)
-					a.remove()
-					
-					// Redirect to success page
-					setTimeout(() => {
-						window.location.href = '/success'
-					}, 1000)
-				} else {
-					const error = await response.text()
-					alert(`Error: ${error}`)
-				}
-			} catch (error) {
-				console.error('Error:', error)
-				alert('An error occurred while generating the SCORM package.')
-			} finally {
-				submitButton.textContent = originalText
-				submitButton.disabled = false
-			}
-		})
 	</script>
 
 	<script type="module">
+		// Import shared SCORM downloader utility
+		import { handleScormGeneration } from '/public/scripts/scorm-downloader.js';
 		// Import and setup object ID auto-generation
-		import { setupAutoObjectIdGeneration } from '/public/js/object-id-generator.js';
+		import { setupAutoObjectIdGeneration } from '/public/scripts/object-id-generator.js';
 		
 		// Setup auto-generation for lesson form
 		// courseTitle, title (lesson title), objectId
 		setupAutoObjectIdGeneration('courseTitle', 'title', 'objectId');
+
+		// Setup SCORM form handler using shared utility
+		document.addEventListener('DOMContentLoaded', () => {
+			const form = document.getElementById('lesson-form');
+			if (form) {
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					await handleScormGeneration(form, '/api/v1/lesson', {
+						defaultFilename: 'lesson-scorm.zip'
+					});
+				});
+			}
+		});
 	</script>
 </body>
 

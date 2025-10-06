@@ -1,54 +1,44 @@
-import { promises as fs } from 'fs'
+
 import path from 'node:path'
+import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Pure function for creating directory paths
-const createPaths = __dirname => ({
-	dist: path.join(__dirname, '../../dist'),
-	work: path.join(__dirname, '../uploads/work')
+const createPaths = dirname => ({
+	dist: path.join(dirname, '../../dist'),
+	temp: path.join(dirname, '../temp')
 })
 
-// Pure function for filtering zip files
+// Helper functions
 const isZipFile = filename => filename.endsWith('.zip')
-
-// Pure function for calculating file age in hours
 const getFileAge = (now, mtime) => (now - mtime) / (1000 * 60 * 60)
-
-// Pure function for determining if file should be deleted
 const shouldDeleteFile = (maxAgeHours, maxFiles) => (file, index) =>
 	getFileAge(new Date(), file.mtime) > maxAgeHours || index >= maxFiles
-
-// Pure function for sorting files by modification time (newest first)
 const sortByModTime = (a, b) => b.mtime - a.mtime
 
-// Higher-order function for async file operations with error handling
 const withErrorHandling = fn => async (...args) => {
 	try {
 		return await fn(...args)
 	} catch (error) {
-		if (error.code !== 'ENOENT') {
-			throw error
-		}
+		if (error.code !== 'ENOENT') throw error
 		return null
 	}
 }
 
-// Function for getting file stats
-const getFileStats = dirPath => async files => 
+const getFileStats = dirPath => async files => {
 	Promise.all(
-		files
-			.filter(isZipFile)
+		files.filter(isZipFile)
 			.map(async file => {
 				const filePath = path.join(dirPath, file)
 				const stats = await fs.stat(filePath)
 				return { name: file, path: filePath, mtime: stats.mtime }
 			})
 	)
+}
 
-// Function for deleting a single file
 const deleteFile = async file => {
 	try {
 		await fs.unlink(file.path)
@@ -61,7 +51,6 @@ const deleteFile = async file => {
 	}
 }
 
-// Function for processing file cleanup
 const processCleanup = (maxAgeHours, maxFiles) => async fileStats => {
 	const sortedFiles = fileStats.sort(sortByModTime)
 	const shouldDelete = shouldDeleteFile(maxAgeHours, maxFiles)
@@ -117,17 +106,17 @@ export const cleanupDistFiles = async (maxAgeHours = 24, maxFiles = 10) => {
 	}
 }
 
-export const cleanupWorkDirectory = async () => {
+export const cleanupTempDirectory = async () => {
 	const paths = createPaths(__dirname)
 	const safeFsRm = withErrorHandling(fs.rm)
 	
 	try {
-		await fs.access(paths.work)
-		await safeFsRm(paths.work, { recursive: true, force: true })
-		console.log('🧹 Cleaned up temporary work directory')
+		await fs.access(paths.temp)
+		await safeFsRm(paths.temp, { recursive: true, force: true })
+		console.log('🧹 Cleaned up temporary processing directory')
 	} catch (error) {
 		if (error.code !== 'ENOENT') {
-			console.warn('⚠️  Failed to clean work directory:', error.message)
+			console.warn('⚠️  Failed to clean temp directory:', error.message)
 		}
 	}
 }
