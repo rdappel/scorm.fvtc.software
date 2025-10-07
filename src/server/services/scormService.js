@@ -23,9 +23,16 @@ const paths = createPaths(__dirname)
 ensureDirSync(paths.uploads)
 ensureDirSync(paths.dist)
 
+// Helper function to generate object ID with timestamp (same pattern as lesson)
+const generateCodePracticeObjectId = (objectId) => {
+	const sanitized = objectId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+	const timestamp = Date.now().toString().slice(-6)
+	return `${sanitized}_${timestamp}`
+}
+
 const createCodePracticeSpec = formData => ({
 	title: formData.practiceTitle,
-	identifier: formData.objectId,
+	identifier: generateCodePracticeObjectId(formData.objectId),
 	scormVersion: '1.2',
 	launch: 'index.html',
 	objectType: 'code-practice',
