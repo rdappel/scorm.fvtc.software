@@ -1,35 +1,31 @@
 
-import { join, resolve, relative, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import pkg from 'fs-extra'
-const { ensureDirSync, emptyDir, pathExists, copy, readFile, writeFile } = pkg
 import ejs from 'ejs'
+import pkg from 'fs-extra'
+import { fileURLToPath } from 'node:url'
 import { logger } from './server/utils/logger.js'
 import { zipDir } from './server/utils/zipper.js'
+import { join, resolve, relative, dirname } from 'node:path'
+
+const { ensureDirSync, emptyDir, pathExists, copy, readFile, writeFile } = pkg
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// Pure function for sanitizing strings
-const sanitize = s => 
-	String(s)
-		.replace(/[^a-z0-9]+/gi, '-')
-		.replace(/(^-|-$)/g, '')
-		.toLowerCase()
+// Helper functions
+const sanitize = s => String(s)
+	.replace(/[^a-z0-9]+/gi, '-')
+	.replace(/(^-|-$)/g, '')
+	.toLowerCase()
 
-// Pure function for determining SCORM version folder
-const getVersionFolder = scormVersion => 
-	scormVersion === '1.2' ? 'scorm12' : 'scorm2004'
+const getVersionFolder = v => v === '1.2' ? 'scorm12' : 'scorm2004'
 
-// Pure function for generating timestamp
-const createTimestamp = () => 
-	new Date()
-		.toISOString()
-		.replace(/[:.]/g, '-')
-		.replace('T', '_')
-		.split('.')[0]
+const createTimestamp = () => new Date()
+	.toISOString()
+	.replace(/[:.]/g, '-')
+	.replace('T', '_')
+	.split('.')[0]
 
-// Pure function for creating export data
+	
 const createExportData = settings => ({
 	courseTitle: settings.courseTitle || '',
 	practiceTitle: settings.practiceTitle || '',
@@ -42,7 +38,6 @@ const createExportData = settings => ({
 	version: '1.0'
 })
 
-// Pure function for creating lesson settings
 const createLessonSettings = settings => ({
 	pageUrl: settings.pageUrl || '',
 	score: {
@@ -66,11 +61,9 @@ const createLessonSettings = settings => ({
 	}
 })
 
-// Higher-order function for template processing
 const processTemplate = templateContent => settings => 
 	ejs.render(templateContent, { spec: settings, Buffer })
 
-// Function for handling code practice generation
 const generateCodePractice = async (settings, workingDirectory, templateDirectory) => {
 	const codePracticeTemplate = join(__dirname, 'templates', 'code-practice')
 	
@@ -95,7 +88,6 @@ const generateCodePractice = async (settings, workingDirectory, templateDirector
 		throw new Error(`Failed to process code practice template: ${ejsError.message}`)
 	}
 	
-	// Copy static assets
 	await Promise.all([
 		copy(join(codePracticeTemplate, 'styles'), join(workingDirectory, 'styles')),
 		copy(join(codePracticeTemplate, 'scripts'), join(workingDirectory, 'scripts')),
@@ -103,7 +95,6 @@ const generateCodePractice = async (settings, workingDirectory, templateDirector
 	])
 }
 
-// Function for handling lesson generation  
 const generateLesson = async (settings, workingDirectory, templateDirectory) => {
 	const lessonTemplate = join(__dirname, 'templates', 'lesson')
 	
@@ -127,19 +118,16 @@ const generateLesson = async (settings, workingDirectory, templateDirectory) => 
 		throw new Error(`Failed to process lesson template: ${ejsError.message}`)
 	}
 	
-	// Generate settings.json
 	const lessonSettings = createLessonSettings(settings)
 	const settingsJson = JSON.stringify(lessonSettings, null, 2)
 	await writeFile(join(workingDirectory, 'settings.json'), settingsJson)
 	
-	// Copy lesson assets
 	await Promise.all([
 		copy(join(lessonTemplate, 'scripts'), join(workingDirectory, 'scripts')),
 		copy(join(templateDirectory, 'api-adapter-1.2.js'), join(workingDirectory, 'api-adapter-1.2.js'))
 	])
 }
 
-// Function for handling standard content generation
 const generateStandardContent = async (settings, workingDirectory, templateDirectory) => {
 	const contentSourcePath = resolve(settings.contentPath || join(__dirname, '..', 'examples', 'content'))
 	
@@ -151,14 +139,12 @@ const generateStandardContent = async (settings, workingDirectory, templateDirec
 	ensureDirSync(contentDestinationPath)
 	await copy(contentSourcePath, contentDestinationPath)
 	
-	// Process launch page template
 	const launchTemplateContent = await readFile(join(templateDirectory, 'launch.ejs'), 'utf8')
 	const launchFileName = settings.launch || 'index.html'
 	const processedLaunchHtml = ejs.render(launchTemplateContent, { spec: settings })
 	await writeFile(join(workingDirectory, launchFileName), processedLaunchHtml)
 }
 
-// Function for content generation based on object type
 const generateContentByType = async (settings, workingDirectory, templateDirectory) => {
 	const generators = {
 		'code-practice': generateCodePractice,
@@ -169,7 +155,6 @@ const generateContentByType = async (settings, workingDirectory, templateDirecto
 	await generator(settings, workingDirectory, templateDirectory)
 }
 
-// Function for creating export file
 const createExportFile = async (settings, workingDirectory) => {
 	if (settings.objectType !== 'code-practice') return
 	
@@ -181,7 +166,6 @@ const createExportFile = async (settings, workingDirectory) => {
 	logger.info(`Created JSON export file: ${exportFilename}`)
 }
 
-// Function for asserting manifest assets
 const assertManifestAssets = async ({ workingDirectory, settings }) => {
 	const launchFileName = settings.launch || 'index.html'
 	const launchFilePath = join(workingDirectory, launchFileName)
@@ -205,7 +189,6 @@ const assertManifestAssets = async ({ workingDirectory, settings }) => {
 	}
 }
 
-// Main generator function
 export const generate = async ({ spec: settings, outdir: outputDirectory, tmpDir: temporaryDirectory, zip = false }) => {
 	const versionFolder = getVersionFolder(settings.scormVersion)
 	const templateDirectory = join(__dirname, 'templates', versionFolder)
