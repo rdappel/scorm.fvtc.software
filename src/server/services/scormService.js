@@ -8,6 +8,7 @@ import { mkdtemp } from 'node:fs/promises'
 import { logger } from '../utils/logger.js'
 import { generate } from '../../generator.js'
 import { validateSpec } from '../utils/validate.js'
+import { sanitizeObjectId } from '../utils/stringUtils.js'
 
 const { ensureDirSync, rm } = pkg
 
@@ -23,16 +24,9 @@ const paths = createPaths(__dirname)
 ensureDirSync(paths.uploads)
 ensureDirSync(paths.dist)
 
-// Helper function to generate object ID with timestamp (same pattern as lesson)
-const generateCodePracticeObjectId = (objectId) => {
-	const sanitized = objectId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
-	const timestamp = Date.now().toString().slice(-6)
-	return `${sanitized}_${timestamp}`
-}
-
 const createCodePracticeSpec = formData => ({
 	title: formData.practiceTitle,
-	identifier: generateCodePracticeObjectId(formData.objectId),
+	identifier: sanitizeObjectId(formData.objectId),
 	scormVersion: '1.2',
 	launch: 'index.html',
 	objectType: 'code-practice',

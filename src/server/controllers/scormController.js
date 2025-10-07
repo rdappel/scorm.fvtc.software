@@ -23,15 +23,6 @@ const createLogData = (settings, hasFile) => ({
 	hasUploadedContent: hasFile
 })
 
-const createBuildResponse = buildInfo => {
-	const fileName = path.basename(buildInfo.zipPath)
-	return {
-		...buildInfo,
-		fileName,
-		downloadUrl: `/api/v1/download/${encodeURIComponent(fileName)}`
-	}
-}
-
 const withCleanup = cleanupFn => fn => async (...args) => {
 	let resources = null
 	try {
@@ -66,13 +57,29 @@ const executeScormGeneration = async (request, response) => {
 	// 3) Generate SCORM package
 	const buildInformation = await generateScormPackage(settings, temporaryExtractDirectory)
 
-	// 4) Send success response with download link
-	const responseData = createBuildResponse(buildInformation)
-	// Note: Success page rendering removed - downloads now handled client-side
-	response.json({ success: true, ...responseData })
+	// 4) Extract filename and set headers for download
+	const fileName = path.basename(buildInformation.zipPath)
+	const headers = {
+		'Content-Disposition': `attachment; filename="${fileName}"`,
+		'Content-Type': 'application/zip'
+	}
+	
+	Object.entries(headers).forEach(([key, value]) => 
+		response.setHeader(key, value)
+	)
+
+	// 5) Send file for download
+	response.download(buildInformation.zipPath, error => {
+		if (error) {
+			logger.error('Error sending SCORM file:', error)
+			if (!response.headersSent) {
+				response.status(500).send('Error downloading file')
+			}
+		}
+	})
 
 	logger.info('SCORM generation completed successfully:', {
-		fileName: responseData.fileName,
+		fileName: fileName,
 		scormVersion: buildInformation.scormVersion
 	})
 

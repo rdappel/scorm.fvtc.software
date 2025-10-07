@@ -2,22 +2,19 @@
 import { generate } from '../../generator.js'
 import { validateSpec } from '../utils/validate.js'
 import { logger } from '../utils/logger.js'
-import { join } from 'node:path'
+import { sanitizeObjectId } from '../utils/stringUtils.js'
+import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = join(__filename, '..', '..', '..')
+const __dirname = dirname(__filename)
 
-// Helper functions
-const sanitizeString = str => 
-	(str || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+const createPaths = dirname => ({
+	uploads: join(dirname, '../uploads'),
+	dist: join(dirname, '../../../dist')
+})
 
-const generateObjectId = (courseTitle, lessonTitle) => {
-	const course = sanitizeString(courseTitle).substring(0, 10)
-	const lesson = sanitizeString(lessonTitle).substring(0, 15)
-	const timestamp = Date.now().toString().slice(-6)
-	return `${course}_${lesson}_${timestamp}`
-}
+const paths = createPaths(__dirname)
 
 const createBaseSpec = (formData, objectId) => ({
 	objectType: 'lesson',
@@ -52,7 +49,7 @@ const createMiscConfig = formData => ({
 })
 
 const buildSpec = formData => {
-	const objectId = generateObjectId(formData.courseTitle, formData.title)
+	const objectId = sanitizeObjectId(formData.objectId)
 	
 	return {
 		...createBaseSpec(formData, objectId),
@@ -64,8 +61,8 @@ const buildSpec = formData => {
 
 const createGenerationOptions = spec => ({
 	spec,
-	outdir: join(__dirname, 'server', 'uploads'),
-	tmpDir: join(__dirname, 'server', 'uploads', 'work'),
+	outdir: paths.dist,
+	tmpDir: join(paths.uploads, '../temp'),
 	zip: true
 })
 
