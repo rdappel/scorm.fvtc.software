@@ -188,6 +188,144 @@ const setupCodeSubmissions = () => {
 	})
 }
 
+const setupLinkSubmissions = () => {
+	const linkSubmissions = document.querySelectorAll('.link-submission')
+
+	const validLinkSubmissions = [ ...linkSubmissions ].filter(element => {
+		const { parentElement } = element
+		if (!parentElement) return false
+
+		const h2 = parentElement.querySelector('h2')
+		if (!h2) return false
+
+		const { id } = h2
+		if (!id) return false
+
+		const input = element.querySelector('input[type="url"], input[type="text"]')
+		if (!input) return false
+
+		const submitButton = element.querySelector('button')
+		if (!submitButton) return false
+
+		return true
+	})
+
+	const submissionCount = validLinkSubmissions.length
+
+	validLinkSubmissions.forEach(element => {
+		const { parentElement, dataset } = element
+
+		const id = parentElement.querySelector('h2')?.id
+		const input = element.querySelector('input[type="url"], input[type="text"]')
+		const submitButton = element.querySelector('button')
+
+		const { urlPattern, validateFetch } = dataset || {}
+		const shouldValidateFetch = validateFetch === 'true'
+
+		// Create error message element
+		let errorElement = element.querySelector('.error-message')
+		if (!errorElement) {
+			errorElement = document.createElement('div')
+			errorElement.classList.add('error-message')
+			errorElement.style.color = 'red'
+			errorElement.style.fontSize = '0.9em'
+			errorElement.style.marginTop = '0.5em'
+			errorElement.style.display = 'none'
+			element.appendChild(errorElement)
+		}
+
+		const showError = (message) => {
+			errorElement.textContent = message
+			errorElement.style.display = 'block'
+		}
+
+		const hideError = () => {
+			errorElement.style.display = 'none'
+		}
+
+		const validateUrl = (url) => {
+			// Basic URL validation
+			try {
+				new URL(url)
+			} catch {
+				return { valid: false, message: 'Please enter a valid URL' }
+			}
+
+			// Pattern validation if provided
+			if (urlPattern) {
+				try {
+					const regex = new RegExp(urlPattern)
+					if (!regex.test(url)) {
+						return { valid: false, message: 'URL does not match the required format' }
+					}
+				} catch {
+					console.warn('Invalid regex pattern:', urlPattern)
+				}
+			}
+
+			return { valid: true }
+		}
+
+		const validateFetchUrl = async (url) => {
+			try {
+				const response = await fetch(url, { 
+					method: 'HEAD',
+					mode: 'no-cors' // Handle CORS issues
+				})
+				// Note: with no-cors mode, we can't check the actual status
+				// but we can detect if the request was blocked
+				return { valid: true }
+			} catch (error) {
+				// Check if it's a CORS error (likely means the URL exists but is protected)
+				if (error.message.includes('CORS') || error.message.includes('cors')) {
+					return { valid: true, message: 'URL appears valid (CORS protected)' }
+				}
+				return { valid: false, message: 'URL could not be reached' }
+			}
+		}
+
+		input.addEventListener('input', hideError)
+
+		submitButton.addEventListener('click', async () => {
+			const url = input.value.trim()
+			if (!url) {
+				showError('Please enter a URL')
+				return
+			}
+
+			hideError()
+			submitButton.disabled = true
+			submitButton.textContent = 'Validating...'
+
+			// Validate URL format and pattern
+			const urlValidation = validateUrl(url)
+			if (!urlValidation.valid) {
+				showError(urlValidation.message)
+				submitButton.disabled = false
+				submitButton.textContent = 'Submit'
+				return
+			}
+
+			// Validate fetch if requested
+			if (shouldValidateFetch) {
+				const fetchValidation = await validateFetchUrl(url)
+				if (!fetchValidation.valid) {
+					showError(fetchValidation.message)
+					submitButton.disabled = false
+					submitButton.textContent = 'Submit'
+					return
+				}
+			}
+
+			// URL is valid, submit it
+			dispatchEvent('link-submitted', { id, url, submissionCount })
+			submitButton.textContent = 'Submitted!'
+			submitButton.disabled = false
+			setTimeout(() => submitButton.textContent = 'Submit', 1000)
+		})
+	})
+}
+
 const disableCourseLinks = () => {
 	[ ...document.querySelectorAll('aside .top a') ].forEach(a => {
 		if (a.href.startsWith('https://github.com/')) return
@@ -293,5 +431,6 @@ export const loadPage = async settings => {
 	setupCodeCopyElements()
 	setupHintAndSolutionTracking()
 	setupCodeSubmissions()
+	setupLinkSubmissions()
 	addCompletionBar()
 }
