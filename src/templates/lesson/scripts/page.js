@@ -104,17 +104,18 @@ const setupVideoToggles = () => {
 	setupShortcutListener()
 }
 
-const setupCodeSubmissions = () => {
+const setupExerciseSubmissions = () => {
 	const exerciseSubmissions = document.querySelectorAll('.exercise-submission')
 
 	const validExerciseSubmissions = [ ...exerciseSubmissions ].filter(element => {
 		const { parentElement } = element
 		if (!parentElement) return false
 
+		const h1 = parentElement.querySelector('h1')
 		const h2 = parentElement.querySelector('h2')
-		if (!h2) return false
+		if (!h1 && !h2) return false
 
-		const { id } = h2
+		const { id } = (h1 || h2)
 		if (!id) return false
 
 		const textarea = element.querySelector('textarea')
@@ -131,7 +132,9 @@ const setupCodeSubmissions = () => {
 	validExerciseSubmissions.forEach(element => {
 		const { parentElement, dataset } = element
 
-		const id = parentElement.querySelector('h2')?.id
+		const h1 = parentElement.querySelector('h1')
+		const h2 = parentElement.querySelector('h2')
+		const { id } = (h1 || h2)
 		const textarea = element.querySelector('textarea')
 		const submitButton = element.querySelector('button')
 
@@ -178,12 +181,13 @@ const setupCodeSubmissions = () => {
 		})
 
 		submitButton.addEventListener('click', () => {
+			const originalText = submitButton.textContent
 			const code = textarea.value.trim()
 			if (!code) return
 
-			dispatchEvent('code-submitted', { id, code, exerciseCount })
+			dispatchEvent('exercise-submitted', { id, code, exerciseCount })
 			submitButton.textContent = 'Submitted!'
-			setTimeout(() => submitButton.textContent = 'Submit', 1000)
+			setTimeout(() => submitButton.textContent = originalText, 2000)
 		})
 	})
 }
@@ -195,10 +199,11 @@ const setupLinkSubmissions = () => {
 		const { parentElement } = element
 		if (!parentElement) return false
 
+		const h1 = parentElement.querySelector('h1')
 		const h2 = parentElement.querySelector('h2')
-		if (!h2) return false
+		if (!h1 && !h2) return false
 
-		const { id } = h2
+		const { id } = (h1 || h2)
 		if (!id) return false
 
 		const input = element.querySelector('input[type="url"], input[type="text"]')
@@ -215,7 +220,9 @@ const setupLinkSubmissions = () => {
 	validLinkSubmissions.forEach(element => {
 		const { parentElement, dataset } = element
 
-		const id = parentElement.querySelector('h2')?.id
+		const h1 = parentElement.querySelector('h1')
+		const h2 = parentElement.querySelector('h2')
+		const { id } = (h1 || h2)
 		const input = element.querySelector('input[type="url"], input[type="text"]')
 		const submitButton = element.querySelector('button')
 
@@ -243,8 +250,7 @@ const setupLinkSubmissions = () => {
 			errorElement.style.display = 'none'
 		}
 
-		const validateUrl = (url) => {
-			// Basic URL validation
+		const validateUrl = url => {
 			try {
 				new URL(url)
 			} catch {
@@ -287,41 +293,46 @@ const setupLinkSubmissions = () => {
 		input.addEventListener('input', hideError)
 
 		submitButton.addEventListener('click', async () => {
+			const originalText = submitButton.textContent
 			const url = input.value.trim()
+
 			if (!url) {
 				showError('Please enter a URL')
 				return
 			}
 
+			const normalizedUrl = (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url))
+				? `https://${url}` : url
+
 			hideError()
 			submitButton.disabled = true
 			submitButton.textContent = 'Validating...'
 
-			// Validate URL format and pattern
-			const urlValidation = validateUrl(url)
+			// Validate URL format and pattern (returns normalized URL when valid)
+			const urlValidation = validateUrl(normalizedUrl)
 			if (!urlValidation.valid) {
 				showError(urlValidation.message)
 				submitButton.disabled = false
-				submitButton.textContent = 'Submit'
+				submitButton.textContent = originalText
 				return
 			}
 
-			// Validate fetch if requested
+			// Validate fetch if requested (use normalized URL)
 			if (shouldValidateFetch) {
-				const fetchValidation = await validateFetchUrl(url)
+				const fetchValidation = await validateFetchUrl(normalizedUrl)
 				if (!fetchValidation.valid) {
 					showError(fetchValidation.message)
 					submitButton.disabled = false
-					submitButton.textContent = 'Submit'
+					submitButton.textContent = originalText
 					return
 				}
 			}
 
-			// URL is valid, submit it
-			dispatchEvent('link-submitted', { id, url, submissionCount })
+			// URL is valid, submit it (use normalized URL)
+			dispatchEvent('link-submitted', { id, link: normalizedUrl, submissionCount })
 			submitButton.textContent = 'Submitted!'
 			submitButton.disabled = false
-			setTimeout(() => submitButton.textContent = 'Submit', 1000)
+			setTimeout(() => submitButton.textContent = originalText, 2000)
 		})
 	})
 }
@@ -430,7 +441,7 @@ export const loadPage = async settings => {
 	setupContentLinks()
 	setupCodeCopyElements()
 	setupHintAndSolutionTracking()
-	setupCodeSubmissions()
+	setupExerciseSubmissions()
 	setupLinkSubmissions()
 	addCompletionBar()
 }

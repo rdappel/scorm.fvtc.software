@@ -222,22 +222,21 @@ import { initializeTheme } from './theme.js'
 		checkIfPassed(newScoreRounded)
 	})
 
-	// code completions
+	// exercise completions
+	const exerciseScores = { }
+	document.addEventListener('exercise-submitted', event => {
+		const { id, content, exerciseCount } = event.detail
 
-	const codeScores = { }
-	document.addEventListener('code-submitted', event => {
-		const { id, code, exerciseCount } = event.detail
-
-		setLog('Code Submitted', `${id}: ${code}`)
+		setLog('Exercise Submitted', `${id}: ${content}`)
 
 		const { scoreMethod, roundScore } = settings.score
 		if (scoreMethod !== 'exerciseSubmissions') return
 
 		const { score } = getScore()
-		codeScores[id] = 1 / exerciseCount
+		exerciseScores[id] = 1 / exerciseCount
 
-		const newTotal = Object.values(codeScores).reduce((total, score) => total + score, 0)
-		const newPercent = newTotal / Object.keys(codeScores).length
+		const newTotal = Object.values(exerciseScores).reduce((total, score) => total + score, 0)
+		const newPercent = newTotal / Object.keys(exerciseScores).length
 
 		if (completionBar === 'exerciseSubmissions') updateCompletionBar(newPercent * 100)
 
@@ -246,12 +245,37 @@ import { initializeTheme } from './theme.js'
 		if (newScoreRounded <= score) return
 
 		setScore(newScoreRounded, maxScore, minScore)
-		setLog('Code Submission Score', `Score set to ${newScoreRounded}/${maxScore} (${roundScore ? '' : 'not '}rounded)`)
+		setLog('Exercise Submission Score', `Score set to ${newScoreRounded}/${maxScore} (${roundScore ? '' : 'not '}rounded)`)
 		checkIfPassed(newScoreRounded)
 
 		const { completionStatus } = settings.score
 
-		if (completionStatus === 'allExercisesSubmitted' && codeScores.length >= exerciseCount) {
+		if (completionStatus === 'allExercisesSubmitted' && exerciseScores.length >= exerciseCount) {
+			setComplete()
+			setLog('Completion Status', 'All exercises submitted')
+		}
+	})
+
+	// link submissions
+	document.addEventListener('link-submitted', event => {
+		const { id, link, exerciseCount } = event.detail
+
+		setLog('Link Submitted', `${id}: ${link}`)
+		const { scoreMethod, roundScore } = settings.score
+		if (scoreMethod !== 'linkSubmissions') return
+
+		const { score } = getScore()
+		const newScore = (1 / exerciseCount) * scoreRange + minScore
+		const newScoreRounded = roundScore ? Math.round(newScore) : newScore
+
+		if (newScoreRounded <= score) return
+		setScore(newScoreRounded, maxScore, minScore)
+		setLog('Link Submission Score', `Score set to ${newScoreRounded}/${maxScore} (${roundScore ? '' : 'not '}rounded)`)
+		checkIfPassed(newScoreRounded)
+
+		const { completionStatus } = settings.score
+
+		if (completionStatus === 'allExercisesSubmitted' && Object.keys(exerciseScores).length >= exerciseCount) {
 			setComplete()
 			setLog('Completion Status', 'All exercises submitted')
 		}
